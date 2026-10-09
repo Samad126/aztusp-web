@@ -1,85 +1,121 @@
-import { useState } from 'react'
-import {
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableSortLabel,
-} from '@mui/material'
-import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined'
-import SemesterToolbar from '../components/SemesterToolbar.tsx'
+import { useMemo } from 'react'
+import { Chip, Stack, TableCell, TableRow, Typography } from '@mui/material'
+import DataTable, { type Column } from '../components/DataTable.tsx'
+import { Async, EmptyState, PageHeader } from '../components/PageState.tsx'
+import { endpoints } from '../api/endpoints.ts'
+import { useApi } from '../api/useApi.ts'
+import type { CourseResult, ScoresPage, SemesterSummary } from '../api/types.ts'
+import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
+import { gradeTone, toNumber } from '../lib/format.ts'
 
-const rows = [
-  { code: 'CS101', course: 'Introduction to programming', quiz1: 8, quiz2: 9, seminar: 14, project: 10, exam: null },
-  { code: 'CS201', course: 'Data structures', quiz1: 10, quiz2: 9, seminar: 18, project: 10, exam: null },
-  { code: 'MA136', course: 'Linear algebra', quiz1: 7, quiz2: 8, seminar: 12, project: 9, exam: null },
-  { code: 'EN030', course: 'Academic English', quiz1: 9, quiz2: 10, seminar: 19, project: 10, exam: 35 },
-  { code: 'CS136', course: 'Web technologies', quiz1: 10, quiz2: 10, seminar: 20, project: 9, exam: null },
+type T = TFunction
+
+const summaryColumns = (t: T): Column<SemesterSummary>[] => [
+  { key: 'semester', header: t('grades.semester'), sortValue: (row) => row.semester, noWrap: true },
+  { key: 'total_courses', header: t('grades.courses'), align: 'right', sortValue: (row) => toNumber(row.total_courses) },
+  { key: 'attended_courses', header: t('grades.attended'), align: 'right', sortValue: (row) => toNumber(row.attended_courses) },
+  { key: 'total_credits', header: t('common.credits'), align: 'right', sortValue: (row) => toNumber(row.total_credits) },
+  { key: 'earned_credits', header: t('grades.earned'), align: 'right', sortValue: (row) => toNumber(row.earned_credits) },
+  {
+    key: 'final_average',
+    header: t('grades.average'),
+    align: 'right',
+    sortValue: (row) => toNumber(row.final_average),
+    render: (row) => <strong>{row.final_average || '—'}</strong>,
+  },
 ]
 
-const total = (row: (typeof rows)[number]) => row.quiz1 + row.quiz2 + row.seminar + row.project + (row.exam ?? 0)
+const resultColumns = (t: T): Column<CourseResult>[] => [
+  { key: 'course', header: t('courses.course'), sortValue: (row) => row.course, render: (row) => <strong>{row.course}</strong> },
+  {
+    key: 'course_type',
+    header: t('grades.type'),
+    sortValue: (row) => row.course_type,
+    render: (row) => (row.course_type ? <Chip size="small" variant="outlined" label={row.course_type} /> : '—'),
+  },
+  { key: 'credits', header: t('common.credits'), align: 'right', sortValue: (row) => toNumber(row.credits) },
+  {
+    key: 'final_score',
+    header: t('grades.finalScore'),
+    align: 'right',
+    sortValue: (row) => toNumber(row.final_score),
+    render: (row) => row.final_score || '—',
+  },
+  {
+    key: 'grade',
+    header: t('grades.grade'),
+    align: 'center',
+    sortValue: (row) => row.grade,
+    render: (row) =>
+      row.grade ? <Chip size="small" color={gradeTone(row.grade)} label={row.grade} sx={{ minWidth: 40, fontWeight: 700 }} /> : '—',
+  },
+  {
+    key: 'retake',
+    header: t('grades.retake'),
+    align: 'center',
+    sortValue: (row) => row.retake,
+    render: (row) =>
+      row.retake.toUpperCase() === 'Y' ? <Chip size="small" color="warning" label={t('grades.retake')} /> : <Typography variant="body2" sx={{ color: 'text.secondary' }}>—</Typography>,
+  },
+]
 
 export default function GradesPage() {
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc')
-
-  const sortedRows = [...rows].sort(
-    (a, b) => a.course.localeCompare(b.course) * (order === 'asc' ? 1 : -1),
-  )
+  const { t } = useTranslation()
+  const summaryCols = useMemo(() => summaryColumns(t), [t])
+  const resultCols = useMemo(() => resultColumns(t), [t])
+  const scores = useApi<ScoresPage>(endpoints.scores)
+  const data = scores.data
+  const total = data?.totals.semesters
 
   return (
     <>
-      <SemesterToolbar />
+      <PageHeader title={t('grades.title')} description={t('grades.description')} />
+      <Async loading={scores.loading} error={scores.error} onRetry={scores.reload} rows={6}>
+        {data && (
+          <Stack spacing={3}>
+            <DataTable
+              title={t('grades.summary')}
+              columns={summaryCols}
+              rows={data.tables.semesters}
+              getRowKey={(row, index) => `${row.semester}-${index}`}
+              paginate={false}
+              minWidth={620}
+              emptyMessage={t('grades.noSemesters')}
+              footer={
+                total && (
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('common.total')}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{total.total_courses}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{total.attended_courses}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{total.total_credits}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{total.earned_credits}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{total.final_average}</TableCell>
+                  </TableRow>
+                )
+              }
+            />
 
-      <TableContainer sx={{ overflowX: 'auto' }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Code</TableCell>
-              <TableCell sortDirection={order}>
-                <TableSortLabel
-                  active
-                  direction={order}
-                  onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
-                >
-                  Course
-                </TableSortLabel>
-              </TableCell>
-              <TableCell align="right">Quiz 1</TableCell>
-              <TableCell align="right">Quiz 2</TableCell>
-              <TableCell align="right">Seminar</TableCell>
-              <TableCell align="right">Project</TableCell>
-              <TableCell align="right">Exam</TableCell>
-              <TableCell align="right">Total</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
+            {data.sections.semester_courses.length === 0 && (
+              <EmptyState title={t('grades.noResults')}>{t('grades.noResultsHint')}</EmptyState>
+            )}
 
-          <TableBody>
-            {sortedRows.map((row) => (
-              <TableRow key={row.code} hover>
-                <TableCell>{row.code}</TableCell>
-                <TableCell>{row.course}</TableCell>
-                <TableCell align="right">{row.quiz1}</TableCell>
-                <TableCell align="right">{row.quiz2}</TableCell>
-                <TableCell align="right">{row.seminar}</TableCell>
-                <TableCell align="right">{row.project}</TableCell>
-                <TableCell align="right">{row.exam ?? '—'}</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700 }}>
-                  {total(row)}
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton size="small" aria-label={`Details for ${row.course}`}>
-                    <FactCheckOutlinedIcon fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
+            {data.sections.semester_courses.map((semester, index) => (
+              <DataTable
+                key={index}
+                title={semester.title ?? t('schedule.semester', { n: index + 1 })}
+                subtitle={semester.rows.length === 1 ? t('grades.courseCountOne') : t('grades.courseCount', { n: semester.rows.length })}
+                columns={resultCols}
+                rows={semester.rows}
+                getRowKey={(row, rowIndex) => `${row.course}-${rowIndex}`}
+                searchable={semester.rows.length > 8}
+                searchPlaceholder={t('grades.searchCourses')}
+                minWidth={680}
+              />
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </Stack>
+        )}
+      </Async>
     </>
   )
 }

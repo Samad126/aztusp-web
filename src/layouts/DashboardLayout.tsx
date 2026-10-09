@@ -1,20 +1,27 @@
 import { useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { AppBar, Avatar, Box, Drawer, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import Sidebar from '../components/Sidebar.tsx'
 import ThemeToggle from '../components/ThemeToggle.tsx'
-import { navItems } from '../navigation.ts'
+import { findNavItem } from '../navigation.ts'
+import { useAuth } from '../auth/AuthContext.ts'
+import { useTranslation } from 'react-i18next'
+import { initials } from '../lib/format.ts'
 import { DRAWER_WIDTH, HEADER_HEIGHT } from './constants.ts'
 
 const drawerPaperSx = {
-  '& .MuiDrawer-paper': { width: DRAWER_WIDTH, boxSizing: 'border-box' },
+  '& .MuiDrawer-paper': { width: DRAWER_WIDTH, maxWidth: '100vw', boxSizing: 'border-box' },
 }
 
 export default function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { pathname } = useLocation()
-  const currentPage = navItems.find((item) => item.path === pathname)
+  const { username } = useAuth()
+  const { t } = useTranslation()
+  const currentPage = findNavItem(pathname)
+
+  if (!username) return <Navigate to="/login" replace />
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -40,12 +47,12 @@ export default function DashboardLayout() {
           position="sticky"
           color="inherit"
           elevation={0}
-          sx={{ bgcolor: 'background.default', borderBottom: 1, borderColor: 'divider' }}
+          sx={{ bgcolor: 'background.default' }}
         >
           <Toolbar sx={{ minHeight: HEADER_HEIGHT, gap: 2, px: { xs: 2, md: 3 } }}>
             <IconButton
               edge="start"
-              aria-label="Open navigation"
+              aria-label={t('nav.open')}
               onClick={() => setMobileOpen(true)}
               sx={{ display: { md: 'none' } }}
             >
@@ -53,11 +60,16 @@ export default function DashboardLayout() {
             </IconButton>
 
             <Typography variant="h6" noWrap sx={{ flexGrow: 1, fontWeight: 700 }}>
-              {currentPage?.label}
+              {currentPage && t(currentPage.labelKey)}
             </Typography>
 
             <ThemeToggle />
-            <Avatar alt="User" />
+            <Avatar
+              alt={username}
+              sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 700, fontSize: 16 }}
+            >
+              {initials(username)}
+            </Avatar>
           </Toolbar>
         </AppBar>
 

@@ -9,10 +9,11 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import Logo from './Logo.tsx'
 import { HEADER_HEIGHT } from '../layouts/constants.ts'
 import { navItems } from '../navigation.ts'
+import { useAuth } from '../auth/AuthContext.ts'
+import { useTranslation } from 'react-i18next'
 import { version } from '../../package.json'
 
-// Placeholder: point this at your repository.
-const SOURCE_CODE_URL = 'https://github.com'
+const SOURCE_CODE_URL = 'https://github.com/Samad126'
 
 const itemSx = {
   minHeight: 56,
@@ -49,9 +50,12 @@ function SidebarItem({
 
 export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const navigate = useNavigate()
+  const { logout } = useAuth()
+  const { t } = useTranslation()
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     onNavigate?.()
+    await logout()
     navigate('/login')
   }
 
@@ -64,13 +68,11 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           gap: 1.5,
           px: 3,
           height: HEADER_HEIGHT,
-          borderBottom: 1,
-          borderColor: 'divider',
         }}
       >
         <Logo />
-        <Typography variant="h6" noWrap sx={{ fontWeight: 500 }}>
-          UserHelper
+        <Typography sx={{ fontSize: '1.2rem', fontWeight: 600, lineHeight: 1.25, whiteSpace: { xs: 'normal', md: 'nowrap' } }}>
+          {t('app.name')}
         </Typography>
       </Box>
 
@@ -83,7 +85,7 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             end={item.path === '/'}
             onClick={onNavigate}
             icon={item.icon}
-            label={item.label}
+            label={t(item.labelKey)}
           />
         ))}
       </List>
@@ -102,9 +104,9 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           target="_blank"
           rel="noreferrer"
           icon={GitHubIcon}
-          label="Source code"
+          label={t('nav.source')}
         />
-        <SidebarItem icon={LogoutIcon} label="Logout" onClick={handleLogout} />
+        <SidebarItem icon={LogoutIcon} label={t('nav.logout')} onClick={handleLogout} />
       </List>
     </Box>
   )

@@ -1,21 +1,12 @@
 import { Box } from '@mui/material'
-import HubOutlinedIcon from '@mui/icons-material/HubOutlined'
 
-export default function Logo() {
+export default function Logo({ size = 40 }: { size?: number }) {
   return (
     <Box
-      sx={{
-        width: 40,
-        height: 40,
-        flexShrink: 0,
-        display: 'grid',
-        placeItems: 'center',
-        borderRadius: 1,
-        bgcolor: 'primary.main',
-        color: 'primary.contrastText',
-      }}
-    >
-      <HubOutlinedIcon />
-    </Box>
+      component="img"
+      src="/aztu-logo.png"
+      alt="AZTU"
+      sx={{ width: size, height: size, flexShrink: 0, borderRadius: 1, display: 'block' }}
+    />
   )
 }

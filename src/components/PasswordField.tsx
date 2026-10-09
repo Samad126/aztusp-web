@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { IconButton, InputAdornment, TextField, type TextFieldProps } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 
 export default function PasswordField(props: TextFieldProps) {
   const [visible, setVisible] = useState(false)
+  const { t } = useTranslation()
 
   return (
     <TextField
@@ -17,7 +19,7 @@ export default function PasswordField(props: TextFieldProps) {
             <InputAdornment position="end">
               <IconButton
                 edge="end"
-                aria-label={visible ? 'Hide password' : 'Show password'}
+                aria-label={visible ? t('password.hide') : t('password.show')}
                 onClick={() => setVisible((prev) => !prev)}
               >
                 {visible ? <VisibilityOffOutlinedIcon /> : <VisibilityOutlinedIcon />}

@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import { Box, Divider, Paper, Typography } from '@mui/material'
 import Logo from '../components/Logo.tsx'
 import ThemeToggle from '../components/ThemeToggle.tsx'
+import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
+import { useTranslation } from 'react-i18next'
 
 export default function AuthLayout({
   title,
@@ -14,9 +16,12 @@ export default function AuthLayout({
   footer: ReactNode
   children: ReactNode
 }) {
+  const { t } = useTranslation()
+
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1, p: 2 }}>
+        <LanguageSwitcher compact />
         <ThemeToggle />
       </Box>
 
@@ -32,7 +37,10 @@ export default function AuthLayout({
               textAlign: 'center',
             }}
           >
-            <Logo />
+            <Logo size={64} />
+            <Typography variant="overline" sx={{ color: 'text.secondary', lineHeight: 1.3 }}>
+              {t('app.name')}
+            </Typography>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
               {title}
             </Typography>

@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles'
+import { alpha, createTheme } from '@mui/material/styles'
 
 // Surfaces and accent follow the reference dashboard: near-black panels with a mint accent in dark mode.
 const palettes = {
@@ -31,6 +31,23 @@ export function createAppTheme(mode: 'light' | 'dark') {
     components: {
       MuiButton: {
         styleOverrides: { root: { textTransform: 'none' } },
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: { borderColor: palette.divider, paddingBlock: 12 },
+          head: {
+            fontSize: 12,
+            fontWeight: 600,
+            letterSpacing: 0.6,
+            textTransform: 'uppercase',
+            color: palette.text.secondary,
+            backgroundColor: alpha(palette.primary, mode === 'dark' ? 0.08 : 0.06),
+            whiteSpace: 'nowrap',
+          },
+        },
+      },
+      MuiChip: {
+        styleOverrides: { root: { fontWeight: 500 } },
       },
     },
   })

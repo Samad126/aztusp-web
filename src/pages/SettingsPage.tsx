@@ -1,6 +1,11 @@
 import { useState, type ReactNode } from 'react'
-import { Box, Divider, Paper, Switch, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { Box, Button, CircularProgress, Divider, Paper, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import LogoutIcon from '@mui/icons-material/Logout'
 import ThemeToggle from '../components/ThemeToggle.tsx'
+import { useAuth } from '../auth/AuthContext.ts'
+import { useTranslation } from 'react-i18next'
+import { languages } from '../i18n/messages.ts'
 
 function SettingRow({
   title,
@@ -25,25 +30,60 @@ function SettingRow({
 }
 
 export default function SettingsPage() {
-  const [emailNotifications, setEmailNotifications] = useState(true)
+  const navigate = useNavigate()
+  const { username, logout } = useAuth()
+  const { t, i18n } = useTranslation()
+  const [busy, setBusy] = useState(false)
+
+  const handleLogout = async () => {
+    setBusy(true)
+    await logout()
+    navigate('/login')
+  }
 
   return (
-    <Paper elevation={0} sx={{ maxWidth: 720, px: 3, py: 1 }}>
+    <Paper elevation={0} sx={{ maxWidth: 720, px: 3, py: 1, border: 1, borderColor: 'divider' }}>
       <SettingRow
-        title="Dark mode"
-        description="Switch between the dark and light theme."
+        title={t('settings.account')}
+        description={t('settings.signedIn', { name: username ?? '' })}
+        control={
+          <Button
+            variant="outlined"
+            color="error"
+            disabled={busy}
+            onClick={handleLogout}
+            startIcon={busy ? <CircularProgress size={16} color="inherit" /> : <LogoutIcon />}
+          >
+            {t('settings.signOut')}
+          </Button>
+        }
+      />
+      <Divider />
+      <SettingRow
+        title={t('settings.dark')}
+        description={t('settings.darkHint')}
         control={<ThemeToggle />}
       />
       <Divider />
       <SettingRow
-        title="Email notifications"
-        description="Receive important updates by email."
+        title={t('settings.language')}
+        description={t('settings.languageHint')}
         control={
-          <Switch
-            checked={emailNotifications}
-            onChange={(event) => setEmailNotifications(event.target.checked)}
-            slotProps={{ input: { 'aria-label': 'Email notifications' } }}
-          />
+          <ToggleButtonGroup
+            exclusive
+            size="small"
+            value={i18n.resolvedLanguage}
+            aria-label={t('settings.language')}
+            onChange={(_, value: string | null) => {
+              if (value) void i18n.changeLanguage(value)
+            }}
+          >
+            {languages.map((item) => (
+              <ToggleButton key={item.code} value={item.code} sx={{ px: 2, textTransform: 'none' }}>
+                {item.label}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
         }
       />
     </Paper>
