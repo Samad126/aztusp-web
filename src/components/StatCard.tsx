@@ -1,7 +1,15 @@
+import type { ElementType } from 'react'
 import { Box, Paper, Typography } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 
-export default function StatCard({ icon: Icon, label, value, tone = 'primary' }) {
+interface StatCardProps {
+  icon: ElementType
+  label: string
+  value: string | number
+  tone?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'
+}
+
+export default function StatCard({ icon: Icon, label, value, tone = 'primary' }: StatCardProps) {
   return (
     <Paper elevation={0} sx={{ width: 180, px: 2, py: 2.5, textAlign: 'center' }}>
       <Box

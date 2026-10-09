@@ -13,7 +13,7 @@ import {
   TableSortLabel,
   Typography,
 } from '@mui/material'
-import SemesterToolbar from '../components/SemesterToolbar.jsx'
+import SemesterToolbar from '../components/SemesterToolbar.tsx'
 
 const rows = [
   {
@@ -75,7 +75,7 @@ const rows = [
 
 export default function AttendancePage() {
   const [includeRate, setIncludeRate] = useState(true)
-  const [order, setOrder] = useState('asc')
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc')
 
   const sortedRows = [...rows].sort(
     (a, b) => a.course.localeCompare(b.course) * (order === 'asc' ? 1 : -1),

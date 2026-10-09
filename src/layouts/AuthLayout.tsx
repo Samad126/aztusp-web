@@ -1,8 +1,19 @@
+import type { ReactNode } from 'react'
 import { Box, Divider, Paper, Typography } from '@mui/material'
-import Logo from '../components/Logo.jsx'
-import ThemeToggle from '../components/ThemeToggle.jsx'
+import Logo from '../components/Logo.tsx'
+import ThemeToggle from '../components/ThemeToggle.tsx'
 
-export default function AuthLayout({ title, subtitle, footer, children }) {
+export default function AuthLayout({
+  title,
+  subtitle,
+  footer,
+  children,
+}: {
+  title: string
+  subtitle: string
+  footer: ReactNode
+  children: ReactNode
+}) {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>

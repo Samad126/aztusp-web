@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
-import { ColorModeContext } from './ColorModeContext.js'
-import { createAppTheme } from './createAppTheme.js'
+import { ColorModeContext, type ColorMode } from './ColorModeContext.ts'
+import { createAppTheme } from './createAppTheme.ts'
 
 const STORAGE_KEY = 'userhelper-color-mode'
 
-function getInitialMode() {
+function getInitialMode(): ColorMode {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY)
     if (saved === 'light' || saved === 'dark') return saved
@@ -15,7 +15,7 @@ function getInitialMode() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-export function ColorModeProvider({ children }) {
+export function ColorModeProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState(getInitialMode)
 
   useEffect(() => {

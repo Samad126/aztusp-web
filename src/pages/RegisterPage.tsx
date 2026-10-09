@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { Box, Button, Link, Stack, TextField } from '@mui/material'
-import AuthLayout from '../layouts/AuthLayout.jsx'
-import PasswordField from '../components/PasswordField.jsx'
+import AuthLayout from '../layouts/AuthLayout.tsx'
+import PasswordField from '../components/PasswordField.tsx'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -10,12 +10,12 @@ export default function RegisterPage() {
 
   const passwordsMismatch = form.confirmPassword !== '' && form.confirmPassword !== form.password
 
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
     // Placeholder: replace with a real sign-up request.
     navigate('/')

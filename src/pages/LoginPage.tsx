@@ -1,12 +1,13 @@
+import type { FormEvent } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { Box, Button, Link, Stack, TextField } from '@mui/material'
-import AuthLayout from '../layouts/AuthLayout.jsx'
-import PasswordField from '../components/PasswordField.jsx'
+import AuthLayout from '../layouts/AuthLayout.tsx'
+import PasswordField from '../components/PasswordField.tsx'
 
 export default function LoginPage() {
   const navigate = useNavigate()
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
     // Placeholder: replace with a real sign-in request.
     navigate('/')

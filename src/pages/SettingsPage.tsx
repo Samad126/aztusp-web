@@ -1,8 +1,16 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Box, Divider, Paper, Switch, Typography } from '@mui/material'
-import ThemeToggle from '../components/ThemeToggle.jsx'
+import ThemeToggle from '../components/ThemeToggle.tsx'
 
-function SettingRow({ title, description, control }) {
+function SettingRow({
+  title,
+  description,
+  control,
+}: {
+  title: string
+  description: string
+  control: ReactNode
+}) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, py: 2 }}>
       <Box>

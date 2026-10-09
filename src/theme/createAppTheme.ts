@@ -16,7 +16,7 @@ const palettes = {
   },
 }
 
-export function createAppTheme(mode) {
+export function createAppTheme(mode: 'light' | 'dark') {
   const palette = palettes[mode]
 
   return createTheme({

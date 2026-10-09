@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { AppBar, Avatar, Box, Drawer, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import Sidebar from '../components/Sidebar.jsx'
-import ThemeToggle from '../components/ThemeToggle.jsx'
-import { navItems } from '../navigation.js'
-import { DRAWER_WIDTH, HEADER_HEIGHT } from './constants.js'
+import Sidebar from '../components/Sidebar.tsx'
+import ThemeToggle from '../components/ThemeToggle.tsx'
+import { navItems } from '../navigation.ts'
+import { DRAWER_WIDTH, HEADER_HEIGHT } from './constants.ts'
 
 const drawerPaperSx = {
   '& .MuiDrawer-paper': { width: DRAWER_WIDTH, boxSizing: 'border-box' },

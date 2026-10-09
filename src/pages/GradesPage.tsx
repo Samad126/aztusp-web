@@ -10,7 +10,7 @@ import {
   TableSortLabel,
 } from '@mui/material'
 import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined'
-import SemesterToolbar from '../components/SemesterToolbar.jsx'
+import SemesterToolbar from '../components/SemesterToolbar.tsx'
 
 const rows = [
   { code: 'CS101', course: 'Introduction to programming', quiz1: 8, quiz2: 9, seminar: 14, project: 10, exam: null },
@@ -20,10 +20,10 @@ const rows = [
   { code: 'CS136', course: 'Web technologies', quiz1: 10, quiz2: 10, seminar: 20, project: 9, exam: null },
 ]
 
-const total = (row) => row.quiz1 + row.quiz2 + row.seminar + row.project + (row.exam ?? 0)
+const total = (row: (typeof rows)[number]) => row.quiz1 + row.quiz2 + row.seminar + row.project + (row.exam ?? 0)
 
 export default function GradesPage() {
-  const [order, setOrder] = useState('asc')
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc')
 
   const sortedRows = [...rows].sort(
     (a, b) => a.course.localeCompare(b.course) * (order === 'asc' ? 1 : -1),

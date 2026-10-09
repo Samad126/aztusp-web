@@ -4,14 +4,14 @@ import DonutLargeOutlinedIcon from '@mui/icons-material/DonutLargeOutlined'
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined'
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined'
 import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined'
-import StatCard from '../components/StatCard.jsx'
+import StatCard from '../components/StatCard.tsx'
 
 const stats = [
   { label: 'Current courses', value: 3, icon: MenuBookOutlinedIcon },
   { label: 'Completed credits', value: 120, icon: DonutLargeOutlinedIcon },
   { label: 'Balance due', value: '$0', icon: BookmarkBorderOutlinedIcon },
   { label: 'GPA', value: '3.90', icon: SchoolOutlinedIcon },
-  { label: 'Progress', value: '0.00%', icon: WorkspacePremiumOutlinedIcon, tone: 'error' },
+  { label: 'Progress', value: '0.00%', icon: WorkspacePremiumOutlinedIcon, tone: 'error' as const },
 ]
 
 const details = [

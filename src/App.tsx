@@ -1,14 +1,14 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { CssBaseline } from '@mui/material'
-import { ColorModeProvider } from './theme/ColorModeProvider.jsx'
-import DashboardLayout from './layouts/DashboardLayout.jsx'
-import LoginPage from './pages/LoginPage.jsx'
-import RegisterPage from './pages/RegisterPage.jsx'
-import HomePage from './pages/HomePage.jsx'
-import NotificationsPage from './pages/NotificationsPage.jsx'
-import AttendancePage from './pages/AttendancePage.jsx'
-import GradesPage from './pages/GradesPage.jsx'
-import SettingsPage from './pages/SettingsPage.jsx'
+import { ColorModeProvider } from './theme/ColorModeProvider.tsx'
+import DashboardLayout from './layouts/DashboardLayout.tsx'
+import LoginPage from './pages/LoginPage.tsx'
+import RegisterPage from './pages/RegisterPage.tsx'
+import HomePage from './pages/HomePage.tsx'
+import NotificationsPage from './pages/NotificationsPage.tsx'
+import AttendancePage from './pages/AttendancePage.tsx'
+import GradesPage from './pages/GradesPage.tsx'
+import SettingsPage from './pages/SettingsPage.tsx'
 
 function App() {
   return (

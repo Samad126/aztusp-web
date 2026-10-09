@@ -1,7 +1,7 @@
 import { Switch } from '@mui/material'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
-import { useColorMode } from '../theme/ColorModeContext.js'
+import { useColorMode } from '../theme/ColorModeContext.ts'
 
 export default function ThemeToggle() {
   const { mode, toggleColorMode } = useColorMode()

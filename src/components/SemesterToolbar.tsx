@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Box, MenuItem, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material'
 
 const years = ['2023', '2024', '2025']
 
-export default function SemesterToolbar({ children }) {
+export default function SemesterToolbar({ children }: { children?: ReactNode }) {
   const [year, setYear] = useState(years[1])
   const [semester, setSemester] = useState('2')
 

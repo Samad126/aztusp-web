@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { IconButton, InputAdornment, TextField } from '@mui/material'
+import { IconButton, InputAdornment, TextField, type TextFieldProps } from '@mui/material'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 
-export default function PasswordField(props) {
+export default function PasswordField(props: TextFieldProps) {
   const [visible, setVisible] = useState(false)
 
   return (
