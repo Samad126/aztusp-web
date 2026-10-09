@@ -1,0 +1,7 @@
+services:
+  web:
+    image: ghcr.io/samad126/aztusp-web:latest
+    build: .
+    ports:
+      - "8080:80"
+    restart: unless-stopped
