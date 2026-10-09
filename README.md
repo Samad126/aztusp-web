@@ -32,4 +32,11 @@ docker build -t aztusp-web .
 docker run -p 8080:80 aztusp-web
 ```
 
-CI (`.github/workflows/ci.yml`) lints and builds on every push/PR; pushes to `main` publish `ghcr.io/samad126/aztusp-web:latest` (plus a sha tag). Deploy with `docker compose pull && docker compose up -d`.
+## Deployment
+
+CI lints and builds on every push/PR. On a push to `main` it deploys over SSH: the server
+checkout (`/pool/www/aztu.alakbaroff.com/frontend`, must already be a git clone of this repo)
+is reset to `origin/main` and rebuilt with `docker compose up -d --build web`, listening on
+`127.0.0.1:3004` behind nginx.
+
+Required Actions secrets: `SSH_HOST`, `SSH_USER`, `SSH_PASSWORD`.

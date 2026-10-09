@@ -1,7 +1,9 @@
+# Fixed project name so containers can't collide with other stacks on the server
+name: aztusp-web
+
 services:
   web:
-    image: ghcr.io/samad126/aztusp-web:latest
     build: .
     ports:
-      - "8080:80"
+      - "127.0.0.1:${WEB_PORT:-8080}:80"  # put a reverse proxy in front
     restart: unless-stopped

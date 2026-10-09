@@ -1,11 +1,16 @@
 name: CI/CD
 
 on:
+  pull_request:
   push:
     branches: [main]
-    tags: ["v*"]
-  pull_request:
-    branches: [main]
+  # Re-run a deploy without pushing a commit.
+  workflow_dispatch:
+
+# Serialise deploys: overlapping builds against the same checkout would collide.
+concurrency:
+  group: deploy-aztusp-web
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -16,35 +21,49 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run lint
       - run: bun run build
+      - name: Docker image builds
+        run: docker build -t aztusp-web .
 
-  docker:
+  deploy:
     needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
-        if: github.event_name != 'pull_request'
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=sha
-            type=semver,pattern={{version}}
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Deploy to server
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          command -v sshpass >/dev/null || sudo apt-get install -y sshpass
+          sshpass -e ssh -p 44544 -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+
+            # Must already be a git clone of this repo.
+            APP_DIR=/pool/www/aztu.alakbaroff.com/frontend
+            WEB_PORT=3004
+
+            git config --global --add safe.directory "$APP_DIR"
+
+            # Deploy target, not a workstation: mirror origin/main exactly.
+            git -C "$APP_DIR" fetch origin main
+            git -C "$APP_DIR" reset --hard origin/main
+
+            WEB_PORT=$WEB_PORT docker compose -f "$APP_DIR/docker-compose.yml" up -d --build web
+
+            # Poll until nginx answers (20 x 3s). A flag and `break`, not `exit 0`,
+            # so ssh's exit status stays honest when the script arrives on stdin.
+            healthy=0
+            for i in $(seq 1 20); do
+              if curl -fsS -o /dev/null http://127.0.0.1:$WEB_PORT/ 2>/dev/null; then
+                echo "web healthy after $((i * 3))s"
+                healthy=1
+                break
+              fi
+              sleep 3
+            done
+
+            if [ "$healthy" -ne 1 ]; then
+              echo "web did not become healthy within 60s" >&2
+              docker compose -f "$APP_DIR/docker-compose.yml" logs --tail 100 web >&2
+              exit 1
+            fi
+          EOF
