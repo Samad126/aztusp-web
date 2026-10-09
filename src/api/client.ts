@@ -2,7 +2,7 @@
 import i18n from '../i18n/index.ts'
 
 const API_BASE: string =
-  import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'http://localhost:8000')
+  import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'https://aztuapi.alakbaroff.com')
 
 const TOKEN_KEY = 'userhelper-token'
 const USER_KEY = 'userhelper-username'
