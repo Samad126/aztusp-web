@@ -13,7 +13,7 @@ import { useAuth } from '../auth/AuthContext.ts'
 import { useTranslation } from 'react-i18next'
 import { version } from '../../package.json'
 
-const SOURCE_CODE_URL = 'https://github.com/Samad126'
+const SOURCE_CODE_URL = 'https://github.com/Samad126/aztusp-web'
 
 const itemSx = {
   minHeight: 56,

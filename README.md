@@ -2,6 +2,10 @@
 
 A React + MUI dashboard layout: login and register pages, a sidebar dashboard, and a working dark/light theme switch. The content is placeholder data; the layout is the part to build on.
 
+## Backend
+
+The data comes from the AZTUSP API. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend).
+
 ## Setup
 
 Install [Bun](https://bun.sh), then install the dependencies:
