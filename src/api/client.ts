@@ -85,6 +85,8 @@ async function send(path: string, init: RequestInit = {}, { keepSession = false 
     try {
       const body = await response.json()
       if (typeof body?.detail === 'string') message = body.detail
+      // A 422 lists each invalid field with an English message, so show one translated line instead.
+      else if (Array.isArray(body?.detail)) message = i18n.t('error.invalid')
     } catch {
       // Non-JSON error body (e.g. a gateway page): keep the status text.
     }
