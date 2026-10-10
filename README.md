@@ -67,7 +67,7 @@ Required Actions secrets: `SSH_HOST`, `SSH_USER`, `SSH_PASSWORD`.
 
 ## Versioning
 
-The version is in `package.json`, and the sidebar footer shows it. The current version is 0.7.1. Bump it with each release: minor for a new feature, patch for a fix or a copy change.
+The version is in `package.json`, and the sidebar footer shows it. The current version is 0.8.0. Bump it with each release: minor for a new feature, patch for a fix or a copy change.
 
 ## License
 
