@@ -11,6 +11,7 @@ export const en = {
   'nav.open': 'Open navigation',
   'nav.source': 'Source code',
   'nav.logout': 'Logout',
+  'account.menu': 'Account menu',
 
   'common.retry': 'Retry',
   'common.close': 'Close',
@@ -269,6 +270,7 @@ export const az: Record<MessageKey, string> = {
   'nav.open': 'Naviqasiyanı aç',
   'nav.source': 'Mənbə kodu',
   'nav.logout': 'Çıxış',
+  'account.menu': 'Hesab menyusu',
 
   'common.retry': 'Yenidən cəhd et',
   'common.close': 'Bağla',

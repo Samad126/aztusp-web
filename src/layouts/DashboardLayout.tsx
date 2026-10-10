@@ -1,14 +1,12 @@
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import PhotoAvatar from '../components/PhotoAvatar.tsx'
+import AccountMenu from '../components/AccountMenu.tsx'
 import Sidebar from '../components/Sidebar.tsx'
 import ThemeToggle from '../components/ThemeToggle.tsx'
 import { findNavItem } from '../navigation.ts'
 import { useAuth } from '../auth/AuthContext.ts'
-import { usePhotoUrl } from '../api/photo.ts'
 import { useTranslation } from 'react-i18next'
-import { initials } from '../lib/format.ts'
 import { DRAWER_WIDTH, HEADER_HEIGHT, MOBILE_DRAWER_WIDTH } from './constants.ts'
 
 const drawerPaperSx = {
@@ -23,7 +21,6 @@ export default function DashboardLayout() {
   const navigate = useNavigate()
   const { pathname, search, hash, state } = useLocation()
   const { username } = useAuth()
-  const photo = usePhotoUrl()
   const { t } = useTranslation()
   const currentPage = findNavItem(pathname)
 
@@ -78,13 +75,7 @@ export default function DashboardLayout() {
             </Typography>
 
             <ThemeToggle />
-            <PhotoAvatar
-              alt={username}
-              src={photo}
-              sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 700, fontSize: 16 }}
-            >
-              {initials(username)}
-            </PhotoAvatar>
+            <AccountMenu />
           </Toolbar>
         </AppBar>
 

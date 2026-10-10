@@ -1,3 +1,10 @@
+import type { StudentInfo } from '../api/types.ts'
+
+/** The student's full name as the portal lists it: last name, first name, father's name. */
+export function studentName(info: Pick<StudentInfo, 'last_name' | 'first_name' | 'father_name'>) {
+  return [info.last_name, info.first_name, info.father_name].filter(Boolean).join(' ')
+}
+
 /** `start_date` / `startDate` -> `Start date`. */
 export function humanize(key: string) {
   const words = key

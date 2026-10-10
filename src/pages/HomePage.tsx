@@ -13,7 +13,7 @@ import { useApi } from '../api/useApi.ts'
 import { usePhotoUrl } from '../api/photo.ts'
 import type { Course, ProfilePage, ScoresPage } from '../api/types.ts'
 import { useTranslation } from 'react-i18next'
-import { initials } from '../lib/format.ts'
+import { initials, studentName } from '../lib/format.ts'
 
 export default function HomePage() {
   const { t } = useTranslation()
@@ -24,7 +24,7 @@ export default function HomePage() {
 
   const info = profile.data?.pairs.info
   const total = scores.data?.totals.semesters
-  const fullName = info ? [info.last_name, info.first_name, info.father_name].filter(Boolean).join(' ') : ''
+  const fullName = info ? studentName(info) : ''
 
   return (
     <Stack spacing={3}>
