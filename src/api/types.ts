@@ -199,3 +199,10 @@ export interface TelegramLink {
   url: string
   expires_at: string
 }
+
+// Site password change (`/me/password`).
+export interface PasswordChangeResult {
+  changed: boolean
+  url: string
+  messages: string[]
+}

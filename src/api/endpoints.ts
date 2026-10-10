@@ -9,6 +9,7 @@ export const endpoints = {
   notifications: `${V1}/me/notifications`,
   telegram: `${V1}/me/telegram`,
   telegramLink: `${V1}/me/telegram/link`,
+  password: `${V1}/me/password`,
   scores: `${V1}/me/scores`,
   schedule: `${V1}/me/schedule`,
   notices: `${V1}/me/notices`,

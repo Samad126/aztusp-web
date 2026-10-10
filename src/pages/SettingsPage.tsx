@@ -4,6 +4,7 @@ import { Box, Button, CircularProgress, Divider, Paper, Stack, ToggleButton, Tog
 import LogoutIcon from '@mui/icons-material/Logout'
 import ThemeToggle from '../components/ThemeToggle.tsx'
 import Subscriptions from '../components/Subscriptions.tsx'
+import PasswordChange from '../components/PasswordChange.tsx'
 import { useAuth } from '../auth/AuthContext.ts'
 import { useTranslation } from 'react-i18next'
 import { languages } from '../i18n/messages.ts'
@@ -89,6 +90,7 @@ export default function SettingsPage() {
           }
         />
       </Paper>
+      <PasswordChange />
       <Subscriptions />
     </Stack>
   )
