@@ -93,6 +93,8 @@ function TelegramRow({ linked, onChanged }: { linked: boolean; onChanged: () => 
   const [waiting, setWaiting] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Set only when the browser blocked the tab, so the user can tap the link instead.
+  const [fallbackUrl, setFallbackUrl] = useState<string | null>(null)
   const awaiting = waiting && !linked
 
   useEffect(() => {
@@ -105,11 +107,17 @@ function TelegramRow({ linked, onChanged }: { linked: boolean; onChanged: () => 
   const handleConnect = async () => {
     setBusy(true)
     setError(null)
+    setFallbackUrl(null)
+    // Safari only opens a window during the click itself, not after the request below, so open the tab now.
+    const tab = window.open('', '_blank')
+    if (tab) tab.opener = null
     try {
       const link = await apiPost<TelegramLink>(endpoints.telegramLink)
-      window.open(link.url, '_blank', 'noopener,noreferrer')
+      if (tab) tab.location.href = link.url
+      else setFallbackUrl(link.url)
       setWaiting(true)
     } catch (caught) {
+      tab?.close()
       setError(caught instanceof Error ? caught.message : t('error.network'))
     } finally {
       setBusy(false)
@@ -122,6 +130,7 @@ function TelegramRow({ linked, onChanged }: { linked: boolean; onChanged: () => 
     try {
       await apiDelete(endpoints.telegram)
       setWaiting(false)
+      setFallbackUrl(null)
       onChanged()
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : t('error.network'))
@@ -148,6 +157,10 @@ function TelegramRow({ linked, onChanged }: { linked: boolean; onChanged: () => 
         {linked ? (
           <Button variant="outlined" color="error" disabled={busy} onClick={handleDisconnect}>
             {t('subscriptions.disconnect')}
+          </Button>
+        ) : fallbackUrl ? (
+          <Button variant="outlined" component="a" href={fallbackUrl} target="_blank" rel="noopener noreferrer">
+            {t('subscriptions.openTelegram')}
           </Button>
         ) : (
           <Button variant="outlined" disabled={busy} onClick={handleConnect}>
