@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Box, Chip, LinearProgress, Typography } from '@mui/material'
+import AbsenceInput from '../components/AbsenceInput.tsx'
 import DataTable, { type Column } from '../components/DataTable.tsx'
 import { Async, PageHeader } from '../components/PageState.tsx'
 import { endpoints } from '../api/endpoints.ts'
 import { fetchCached, useApi } from '../api/useApi.ts'
 import type { Course, CourseAttendance, ProfilePage } from '../api/types.ts'
 import { useTranslation } from 'react-i18next'
-import { countMarks, findMyRow } from '../lib/attendance.ts'
-import { percentTone, toNumber } from '../lib/format.ts'
+import { countMarks, estimateRate, findMyRow, parseLessons } from '../lib/attendance.ts'
+import { formatPercent, percentTone, toNumber } from '../lib/format.ts'
 
 interface Row {
   course: Course
@@ -18,13 +19,15 @@ interface Row {
 }
 
 export default function AttendancePage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const courses = useApi<Course[]>(endpoints.courses)
   const profile = useApi<ProfilePage>(endpoints.profile)
   const studentId = profile.data?.pairs.info.student_id
   const [results, setResults] = useState<Record<string, Row>>({})
   const [nonce, setNonce] = useState(0)
+  const [absence, setAbsence] = useState('')
+  const lessons = parseLessons(absence)
 
   // One request per course; each row fills in as soon as its own response arrives.
   useEffect(() => {
@@ -47,6 +50,7 @@ export default function AttendancePage() {
 
   const columns = useMemo<Column<Row>[]>(() => {
     const mine = (row: Row) => (row.attendance ? findMyRow(row.attendance, studentId) : undefined)
+    const estimate = (row: Row) => (row.attendance ? estimateRate(row.attendance, mine(row), lessons) : null)
     return [
       {
         key: 'course',
@@ -96,30 +100,43 @@ export default function AttendancePage() {
         key: 'rate',
         header: t('attendance.rate'),
         align: 'right',
-        sortValue: (row) => toNumber(mine(row)?.percent),
+        // Sorts by the figure shown: the estimate while absences are simulated, otherwise the portal's rate.
+        sortValue: (row) => (lessons > 0 ? estimate(row) : null) ?? toNumber(mine(row)?.percent),
         render: (row) => {
           if (row.state === 'loading') return <LinearProgress sx={{ width: 120, ml: 'auto', borderRadius: 3 }} />
           if (row.state === 'error') return <Typography variant="body2" color="error">{row.error}</Typography>
           const percent = toNumber(mine(row)?.percent)
           if (percent === null) return '—'
-          const tone = percentTone(percent)
+          // With absences entered, the bar and the new figure show the estimate, and the portal's figure is struck through.
+          const estimated = lessons > 0 ? estimate(row) : null
+          const shown = estimated ?? percent
+          const tone = percentTone(shown)
           return (
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, width: estimated === null ? 136 : 180, ml: 'auto' }}>
               <LinearProgress
                 variant="determinate"
                 color={tone === 'default' ? 'primary' : tone}
-                value={Math.min(100, percent)}
-                sx={{ width: 90, height: 6, borderRadius: 3 }}
+                value={Math.min(100, shown)}
+                sx={{ width: 90, height: 6, borderRadius: 3, flexShrink: 0 }}
               />
-              <Typography variant="body2" sx={{ minWidth: 44, fontWeight: 600 }}>
-                {percent}%
+              <Typography variant="body2" sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>
+                {estimated === null ? (
+                  `${percent}%`
+                ) : (
+                  <>
+                    <Box component="s" sx={{ color: 'text.secondary', fontWeight: 400, mr: 1 }}>
+                      {formatPercent(percent, i18n.language)}
+                    </Box>
+                    {formatPercent(estimated, i18n.language)}
+                  </>
+                )}
               </Typography>
             </Box>
           )
         },
       },
     ]
-  }, [studentId, t])
+  }, [studentId, t, i18n.language, lessons])
 
   return (
     <>
@@ -127,6 +144,9 @@ export default function AttendancePage() {
         title={t('attendance.title')}
         description={t('attendance.description')}
       />
+      <Box sx={{ mb: 2 }}>
+        <AbsenceInput value={absence} onChange={setAbsence} helperText={t('absence.overviewHint')} />
+      </Box>
       <Async
         loading={courses.loading}
         error={courses.error}
