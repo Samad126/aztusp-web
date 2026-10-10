@@ -208,7 +208,8 @@ function SubscriptionForm({
       setNotice(done)
       onChanged()
     } catch (caught) {
-      // A 401 on save means the site rejected the password saved at sign-in. The session is kept for that (see `send`).
+      // A 401 on save: the sign-in has ended (token expired) or the site rejected the saved password. The session is
+      // kept so the message can say what to do (see `send`).
       const rejected = action === 'save' && caught instanceof ApiError && caught.status === 401
       setError(rejected ? t('subscriptions.relogin') : caught instanceof Error ? caught.message : t('error.network'))
     } finally {
