@@ -1,41 +1,125 @@
-import { Stack, Typography } from '@mui/material'
+import { useState } from 'react'
+import { Link, MenuItem, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import ViewModuleOutlinedIcon from '@mui/icons-material/ViewModuleOutlined'
+import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined'
 import { Async, EmptyState, PageHeader } from '../components/PageState.tsx'
-import RecordsTable from '../components/RecordsTable.tsx'
+import TimetableGrid from '../components/TimetableGrid.tsx'
+import TimetableList from '../components/TimetableList.tsx'
 import { endpoints } from '../api/endpoints.ts'
 import { useApi } from '../api/useApi.ts'
 import { useTranslation } from 'react-i18next'
-import type { SchedulePage as ScheduleData } from '../api/types.ts'
+import type { SchedulePage as ScheduleData, ScheduleView } from '../api/types.ts'
+import { weekLabel } from '../i18n/index.ts'
+import { buildGrid, buildList, currentWeek, gridFromApi, resolveWeek, type WeekFilter } from '../lib/timetable.ts'
+
+const VIEW_KEY = 'userhelper-schedule-view'
+
+// The view the student last chose. Storage can be blocked, so a failed read falls back to the grid.
+function savedView(): ScheduleView {
+  try {
+    return window.localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'grid'
+  } catch {
+    return 'grid'
+  }
+}
+
+function rememberView(view: ScheduleView) {
+  try {
+    window.localStorage.setItem(VIEW_KEY, view)
+  } catch {
+    // Storage blocked: the choice lasts until the page is left.
+  }
+}
 
 export default function SchedulePage() {
   const { t } = useTranslation()
-  const schedule = useApi<ScheduleData>(endpoints.schedule)
+  const [view, setView] = useState<ScheduleView>(savedView)
+  // The week filter starts on the week today falls in (Baku time, counted from 15 September).
+  const [weekFilter, setWeekFilter] = useState<WeekFilter>('current')
+  const week = resolveWeek(weekFilter)
+  // The API fills `grids` for `view=grid` and `sections` for `view=list`. The university's own timetable is in `sections`
+  // in both, so when `grids` is empty the sections are shown in the chosen view.
+  const schedule = useApi<ScheduleData>(`${endpoints.schedule}?view=${view}`)
+  const grids = schedule.data?.grids ?? []
   const semesters = schedule.data?.sections.semesters ?? []
+  const source = schedule.data?.url
 
   return (
     <>
-      <PageHeader title={t('schedule.title')} description={t('schedule.description')} />
+      <PageHeader
+        title={t('schedule.title')}
+        description={t('schedule.description')}
+        actions={
+          <Stack direction="row" sx={{ flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
+            <TextField
+              select
+              size="small"
+              label={t('schedule.week')}
+              value={weekFilter}
+              onChange={(event) => setWeekFilter(event.target.value as WeekFilter)}
+              sx={{ minWidth: 200 }}
+            >
+              <MenuItem value="current">{t('schedule.weekCurrent', { week: weekLabel(currentWeek()) })}</MenuItem>
+              <MenuItem value="all">{t('schedule.weekAll')}</MenuItem>
+              <MenuItem value="upper">{weekLabel('upper')}</MenuItem>
+              <MenuItem value="lower">{weekLabel('lower')}</MenuItem>
+            </TextField>
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={view}
+              aria-label={t('schedule.view')}
+              onChange={(_, value: ScheduleView | null) => {
+                if (!value) return
+                setView(value)
+                rememberView(value)
+              }}
+            >
+              <ToggleButton value="grid" sx={{ px: 2, textTransform: 'none' }}>
+                <ViewModuleOutlinedIcon fontSize="small" sx={{ mr: 0.75 }} />
+                {t('schedule.viewGrid')}
+              </ToggleButton>
+              <ToggleButton value="list" sx={{ px: 2, textTransform: 'none' }}>
+                <ViewListOutlinedIcon fontSize="small" sx={{ mr: 0.75 }} />
+                {t('schedule.viewList')}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Stack>
+        }
+      />
       <Async loading={schedule.loading} error={schedule.error} onRetry={schedule.reload} rows={6}>
-        {semesters.length === 0 ? (
+        {grids.length === 0 && semesters.length === 0 ? (
           <EmptyState title={t('schedule.empty')}>{t('schedule.emptyHint')}</EmptyState>
         ) : (
           <Stack spacing={3}>
-            {semesters.map((semester, index) =>
-              semester.rows.length === 0 ? (
-                <EmptyState key={index} title={semester.title ?? 'Timetable'}>
-                  {t('schedule.noLessons')}
-                </EmptyState>
+            {grids.map((block, index) => (
+              <TimetableGrid key={`grid-${index}`} title={block.title} grid={gridFromApi(block)} week={week} />
+            ))}
+            {semesters.map((semester, index) => {
+              const title = semester.title ?? t('schedule.semester', { n: index + 1 })
+              if (semester.rows.length === 0) {
+                return (
+                  <EmptyState key={`semester-${index}`} title={title}>
+                    {t('schedule.noLessons')}
+                  </EmptyState>
+                )
+              }
+              return view === 'grid' ? (
+                <TimetableGrid key={`semester-${index}`} title={title} grid={buildGrid(buildList(semester.rows))} week={week} />
               ) : (
-                <RecordsTable
-                  key={index}
-                  title={semester.title ?? t('schedule.semester', { n: index + 1 })}
-                  rows={semester.rows}
-                  searchable={false}
-                  minWidth={900}
-                />
-              ),
-            )}
+                <TimetableList key={`semester-${index}`} title={title} rows={semester.rows} week={week} />
+              )
+            })}
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {t('schedule.footnote')}
+              {source && (
+                <>
+                  {' '}
+                  <Link href={source} target="_blank" rel="noreferrer" underline="hover">
+                    {t('schedule.source')}
+                  </Link>
+                </>
+              )}
             </Typography>
           </Stack>
         )}

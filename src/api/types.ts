@@ -71,8 +71,39 @@ export interface ScoresPage extends Envelope {
   sections: { semester_courses: Section<CourseResult>[] }
 }
 
+// `ScheduleView` is the layout the student has picked, and it is sent as `?view=`.
+export type ScheduleView = 'list' | 'grid'
+
+// `view=grid`: one grid per group in `grids`. `times` are the columns, and each day is a row (`monday` to `friday`).
+export interface GridCard {
+  type: string // `lecture`, `lab`, or empty when the export does not say
+  week: string // `upper` (üst həftə), `lower` (alt həftə), or `both` (every week)
+  course: string
+  teacher: string
+  room: string
+}
+
+export interface GridLesson {
+  time: string
+  cards: GridCard[]
+}
+
+export interface GridDay {
+  day: string // `monday` to `friday`
+  lessons: GridLesson[]
+}
+
+export interface GridBlock {
+  title: string
+  times: string[]
+  days: GridDay[]
+}
+
+// `view=list` rows are sessions: `day` (`monday` to `friday`), `time`, `week`, `course`, `type`, `room`, `teacher`.
+// The university's own timetable is in `sections` in both views, as text, with `Dərs` plus a key per weekday.
 export interface SchedulePage extends Envelope {
   sections: { semesters: Section[] }
+  grids: GridBlock[]
 }
 
 export interface NoticeRow {

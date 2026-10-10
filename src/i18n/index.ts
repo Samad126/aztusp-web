@@ -36,4 +36,26 @@ export function fieldLabel(key: string) {
   return words.charAt(0).toUpperCase() + words.slice(1)
 }
 
+const WEEKDAY_KEYS = ['weekday.monday', 'weekday.tuesday', 'weekday.wednesday', 'weekday.thursday', 'weekday.friday'] as const
+
+/** The heading for a school day: translated for Monday to Friday, and the name the API gave for any other day. */
+export function weekdayLabel(index: number | undefined, name: string) {
+  return index === undefined ? name : i18n.t(WEEKDAY_KEYS[index])
+}
+
+/** The label for a lesson type from the API (`lecture`, `lab`). An empty type, or one not listed here, is shown as it came. */
+export function lessonTypeLabel(type: string) {
+  if (type === 'lecture') return i18n.t('lesson.lecture')
+  if (type === 'lab') return i18n.t('lesson.lab')
+  return type
+}
+
+/** The label for a week from the API (`upper`, `lower`, `both`). A week not listed here is shown as it came. */
+export function weekLabel(week: string) {
+  if (week === 'upper') return i18n.t('week.upper')
+  if (week === 'lower') return i18n.t('week.lower')
+  if (week === 'both') return i18n.t('week.both')
+  return week
+}
+
 export default i18n

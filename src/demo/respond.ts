@@ -1,7 +1,7 @@
 import { endpoints } from '../api/endpoints.ts'
-import type { CourseTab } from '../api/types.ts'
+import type { CourseTab, ScheduleView } from '../api/types.ts'
 import i18n from '../i18n/index.ts'
-import { ATTACHMENT_PATH, attachmentText, noticeDetails, noticesPage, profile, schedule, scores, subscription, telegram } from './data.ts'
+import { ATTACHMENT_PATH, attachmentText, noticeDetails, noticesPage, profile, scheduleFor, scores, subscription, telegram } from './data.ts'
 import { demoCourses } from './courses.ts'
 
 const COURSE_TABS: CourseTab[] = ['notices', 'board', 'materials', 'tasks']
@@ -10,7 +10,6 @@ const COURSE_TABS: CourseTab[] = ['notices', 'board', 'materials', 'tasks']
 const responses = new Map<string, unknown>([
   [endpoints.profile, profile],
   [endpoints.scores, scores],
-  [endpoints.schedule, schedule],
   [endpoints.notices, noticesPage],
   [endpoints.notifications, subscription],
   [endpoints.telegram, telegram],
@@ -37,6 +36,12 @@ export function demoResponse(method: string, path: string): Response {
   if (method.toUpperCase() !== 'GET') return json({ detail: i18n.t('demo.readOnly') }, 403)
   if (path.startsWith(ATTACHMENT_PATH)) {
     return new Response(attachmentText, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } })
+  }
+  // The schedule depends on `?view=`, which is read here. The API's default view is list.
+  const [pathname, query = ''] = path.split('?')
+  if (pathname === endpoints.schedule) {
+    const view: ScheduleView = new URLSearchParams(query).get('view') === 'grid' ? 'grid' : 'list'
+    return json(scheduleFor(view))
   }
   const body = responses.get(path)
   // Anything without sample data, such as a profile photo, looks the same as it does for a student without one.
