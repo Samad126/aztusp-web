@@ -4,6 +4,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import ThemeToggle from '../components/ThemeToggle.tsx'
 import Subscriptions from '../components/Subscriptions.tsx'
 import PasswordChange from '../components/PasswordChange.tsx'
+import ProfilePhoto from '../components/ProfilePhoto.tsx'
 import { useAuth } from '../auth/AuthContext.ts'
 import { useSignOut } from '../auth/useSignOut.ts'
 import { useTranslation } from 'react-i18next'
@@ -83,6 +84,7 @@ export default function SettingsPage() {
           }
         />
       </Paper>
+      <ProfilePhoto />
       <PasswordChange />
       <Subscriptions />
     </Stack>

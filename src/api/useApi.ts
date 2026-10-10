@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { apiGet } from './client.ts'
+import { clearPhoto } from './photo.ts'
 
 // Every call scrapes the university portal live, so responses are kept for a while
 // and shared between components instead of being re-fetched on each navigation.
@@ -11,6 +12,7 @@ const inflight = new Map<string, Promise<unknown>>()
 export function clearApiCache() {
   cache.clear()
   inflight.clear()
+  clearPhoto()
 }
 
 export function fetchCached<T>(path: string, force = false): Promise<T> {

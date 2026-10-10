@@ -1,6 +1,6 @@
 # AZTUSP Frontend
 
-A React + MUI dashboard for students. They sign in with their university account and see their courses (plan, items, scores and attendance), schedule, grades, attendance, notices and settings. Settings change the site password and change notifications (including Telegram), and switch the theme and the language (English or Azerbaijani).
+A React + MUI dashboard for students. They sign in with their university account and see their courses (plan, items, scores and attendance), schedule, grades, attendance, notices and settings. Settings set a profile photo, change the site password and change notifications (including Telegram), and switch the theme and the language (English or Azerbaijani).
 
 ## Backend
 

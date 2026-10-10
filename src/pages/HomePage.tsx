@@ -1,4 +1,4 @@
-import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
+import { Avatar, Box, Chip, Paper, Stack, Typography } from '@mui/material'
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined'
 import DonutLargeOutlinedIcon from '@mui/icons-material/DonutLargeOutlined'
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined'
@@ -9,6 +9,7 @@ import KeyValueGrid from '../components/KeyValueGrid.tsx'
 import { Async } from '../components/PageState.tsx'
 import { endpoints } from '../api/endpoints.ts'
 import { useApi } from '../api/useApi.ts'
+import { usePhotoUrl } from '../api/photo.ts'
 import type { Course, ProfilePage, ScoresPage } from '../api/types.ts'
 import { useTranslation } from 'react-i18next'
 import { initials } from '../lib/format.ts'
@@ -18,6 +19,7 @@ export default function HomePage() {
   const profile = useApi<ProfilePage>(endpoints.profile)
   const scores = useApi<ScoresPage>(endpoints.scores)
   const courses = useApi<Course[]>(endpoints.courses)
+  const photo = usePhotoUrl()
 
   const info = profile.data?.pairs.info
   const total = scores.data?.totals.semesters
@@ -39,13 +41,12 @@ export default function HomePage() {
               borderColor: 'divider',
             }}
           >
-            <Box
+            <Avatar
+              alt={fullName}
+              src={photo ?? undefined}
               sx={{
                 width: 72,
                 height: 72,
-                display: 'grid',
-                placeItems: 'center',
-                borderRadius: '50%',
                 bgcolor: 'primary.main',
                 color: 'primary.contrastText',
                 fontSize: 26,
@@ -53,7 +54,7 @@ export default function HomePage() {
               }}
             >
               {initials(fullName)}
-            </Box>
+            </Avatar>
             <Box sx={{ flexGrow: 1, minWidth: 220 }}>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
                 {fullName || info.english_name}

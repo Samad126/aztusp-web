@@ -129,6 +129,15 @@ export function apiDelete<T = unknown>(path: string): Promise<T> {
   return sendJson<T>('DELETE', path)
 }
 
+/** Sends a file as the raw request body, the way `PUT /me/photo` takes it. */
+export async function apiPutFile(path: string, file: Blob): Promise<void> {
+  await send(path, { method: 'PUT', headers: file.type ? { 'Content-Type': file.type } : undefined, body: file })
+}
+
+export async function apiGetBlob(path: string): Promise<Blob> {
+  return (await send(path)).blob()
+}
+
 function fileNameFrom(header: string | null) {
   if (!header) return null
   const encoded = /filename\*=UTF-8''([^;]+)/i.exec(header)

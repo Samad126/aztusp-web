@@ -50,6 +50,16 @@ export const en = {
   'password.notChanged': 'The university site did not accept the new password.',
   'password.notificationsHint': 'Result notifications keep working with the new password.',
 
+  'photo.title': 'Profile photo',
+  'photo.description': 'Shown in the top bar and on your home page. JPEG, PNG or WebP, 2 MB at most. It is kept on this service, not on the university site.',
+  'photo.upload': 'Upload photo',
+  'photo.replace': 'Replace photo',
+  'photo.remove': 'Remove photo',
+  'photo.uploaded': 'Photo saved.',
+  'photo.removed': 'Photo removed.',
+  'photo.tooLarge': 'The photo must be 2 MB or smaller.',
+  'photo.wrongType': 'Upload a JPEG, PNG or WebP image.',
+
   'home.currentCourses': 'Current courses',
   'home.finalAverage': 'Final average',
   'home.totalCredits': 'Total credits',
@@ -296,6 +306,16 @@ export const az: Record<MessageKey, string> = {
   'password.changed': 'Parol dəyişdirildi. Növbəti dəfə daxil olanda yeni parolu istifadə edin.',
   'password.notChanged': 'Universitet saytı yeni parolu qəbul etmədi.',
   'password.notificationsHint': 'Nəticə bildirişləri yeni parolla davam edəcək.',
+
+  'photo.title': 'Profil şəkli',
+  'photo.description': 'Yuxarı paneldə və ana səhifədə göstərilir. JPEG, PNG və ya WebP, ən çox 2 MB. Şəkil universitet saytında deyil, bu xidmətdə saxlanılır.',
+  'photo.upload': 'Şəkil yüklə',
+  'photo.replace': 'Şəkli dəyiş',
+  'photo.remove': 'Şəkli sil',
+  'photo.uploaded': 'Şəkil saxlanıldı.',
+  'photo.removed': 'Şəkil silindi.',
+  'photo.tooLarge': 'Şəkil ən çox 2 MB ola bilər.',
+  'photo.wrongType': 'JPEG, PNG və ya WebP formatında şəkil yükləyin.',
 
   'home.currentCourses': 'Cari kurslar',
   'home.finalAverage': 'Yekun ortalama',

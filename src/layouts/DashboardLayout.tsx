@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar.tsx'
 import ThemeToggle from '../components/ThemeToggle.tsx'
 import { findNavItem } from '../navigation.ts'
 import { useAuth } from '../auth/AuthContext.ts'
+import { usePhotoUrl } from '../api/photo.ts'
 import { useTranslation } from 'react-i18next'
 import { initials } from '../lib/format.ts'
 import { DRAWER_WIDTH, HEADER_HEIGHT, MOBILE_DRAWER_WIDTH } from './constants.ts'
@@ -21,6 +22,7 @@ export default function DashboardLayout() {
   const navigate = useNavigate()
   const { pathname, search, hash, state } = useLocation()
   const { username } = useAuth()
+  const photo = usePhotoUrl()
   const { t } = useTranslation()
   const currentPage = findNavItem(pathname)
 
@@ -77,6 +79,7 @@ export default function DashboardLayout() {
             <ThemeToggle />
             <Avatar
               alt={username}
+              src={photo ?? undefined}
               sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 700, fontSize: 16 }}
             >
               {initials(username)}
