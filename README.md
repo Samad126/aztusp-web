@@ -1,4 +1,4 @@
-# UserHelper
+# AZTUSP Frontend
 
 A React + MUI dashboard layout: login and register pages, a sidebar dashboard, and a working dark/light theme switch. The content is placeholder data; the layout is the part to build on.
 
@@ -44,3 +44,7 @@ is reset to `origin/main` and rebuilt with `docker compose up -d --build web`, l
 `127.0.0.1:3004` behind nginx.
 
 Required Actions secrets: `SSH_HOST`, `SSH_USER`, `SSH_PASSWORD`.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
