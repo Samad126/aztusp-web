@@ -19,9 +19,19 @@ function SettingRow({
   description: string
   control: ReactNode
 }) {
+  // On phones the control goes under the text, so the text has the full width instead of a narrow column.
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, py: 2 }}>
-      <Box>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        alignItems: { xs: 'flex-start', sm: 'center' },
+        justifyContent: 'space-between',
+        gap: { xs: 1.5, sm: 2 },
+        py: 2,
+      }}
+    >
+      <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
         <Typography sx={{ fontWeight: 500 }}>{title}</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {description}
@@ -59,7 +69,12 @@ export default function SettingsPage() {
         <SettingRow
           title={t('settings.dark')}
           description={t('settings.darkHint')}
-          control={<ThemeToggle />}
+          // The switch has built-in padding; on phones the negative margin lines its track up with the text.
+          control={
+            <Box sx={{ ml: { xs: -1.5, sm: 0 } }}>
+              <ThemeToggle />
+            </Box>
+          }
         />
         <Divider />
         <SettingRow

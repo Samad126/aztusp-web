@@ -18,6 +18,7 @@ const palettes = {
 
 export function createAppTheme(mode: 'light' | 'dark') {
   const palette = palettes[mode]
+  const headTint = alpha(palette.primary, mode === 'dark' ? 0.08 : 0.06)
 
   return createTheme({
     palette: {
@@ -41,7 +42,10 @@ export function createAppTheme(mode: 'light' | 'dark') {
             letterSpacing: 0.6,
             textTransform: 'uppercase',
             color: palette.text.secondary,
-            backgroundColor: alpha(palette.primary, mode === 'dark' ? 0.08 : 0.06),
+            // The tint is laid over the paper colour, not used alone: a translucent header lets the rows scrolling
+            // under it (and under a sticky column) show through.
+            backgroundColor: palette.background.paper,
+            backgroundImage: `linear-gradient(${headTint}, ${headTint})`,
             whiteSpace: 'nowrap',
           },
         },

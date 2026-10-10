@@ -239,9 +239,11 @@ export default function DataTable<T>({
                           position: 'sticky',
                           left: 0,
                           zIndex: 1,
-                          bgcolor: highlighted
-                            ? alpha(theme.palette.primary.main, 0.16)
-                            : theme.palette.background.paper,
+                          // Opaque, so the cells scrolling underneath don't show through: the highlight is laid over the paper.
+                          backgroundColor: theme.palette.background.paper,
+                          backgroundImage: highlighted
+                            ? `linear-gradient(${alpha(theme.palette.primary.main, 0.16)}, ${alpha(theme.palette.primary.main, 0.16)})`
+                            : undefined,
                         }),
                       })}
                     >

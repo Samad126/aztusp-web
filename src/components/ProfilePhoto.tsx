@@ -63,7 +63,12 @@ export default function ProfilePhoto() {
       </Typography>
       <input ref={inputRef} type="file" accept={PHOTO_TYPES.join(',')} hidden onChange={handleFile} />
 
-      <Stack direction="row" spacing={2.5} sx={{ mt: 2.5, alignItems: 'center', flexWrap: 'wrap', rowGap: 2 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={2.5}
+        useFlexGap
+        sx={{ mt: 2.5, alignItems: { xs: 'flex-start', sm: 'center' } }}
+      >
         {photo === undefined ? (
           <Skeleton variant="circular" width={96} height={96} />
         ) : (
@@ -76,7 +81,7 @@ export default function ProfilePhoto() {
           </PhotoAvatar>
         )}
 
-        <Stack direction="row" spacing={1.5} sx={{ flexWrap: 'wrap', rowGap: 1.5 }}>
+        <Stack direction="row" spacing={1.5} useFlexGap sx={{ flexWrap: 'wrap' }}>
           <Button
             variant="contained"
             disabled={busy !== null}
