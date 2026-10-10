@@ -1,10 +1,10 @@
 # AZTUSP Frontend
 
-A React + MUI dashboard for students. They sign in with their university account and see their courses (plan, items, scores and attendance), schedule, grades, attendance, notices and settings. Settings set a profile photo, change the site password and change notifications (including Telegram), and switch the theme and the language (English or Azerbaijani).
+A React + MUI dashboard for students. They sign in with their university account and see their courses (plan, items, scores and attendance), schedule, grades, attendance, notices and settings. Settings set a profile photo (up to 10 MB), change the site password and change notifications (including Telegram), and switch the theme and the language (English or Azerbaijani). The avatar in the top right shows the student's name and signs them out.
 
 ## Backend
 
-The data comes from the AZTUSP API. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend), and its interactive docs are at [aztuapi.alakbaroff.com/docs](https://aztuapi.alakbaroff.com/docs).
+The data comes from the AZTUSP API, version 2.3.0, which this app is built against. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend), and its interactive docs are at [aztuapi.alakbaroff.com/docs](https://aztuapi.alakbaroff.com/docs).
 
 Signing out calls `POST /api/v1/auth/logout`, which also signs out of the university site, then clears the local session.
 
@@ -30,9 +30,9 @@ bun install
 
 ## Structure
 
-- `src/api/` - API client (token, errors), endpoint paths and response types
+- `src/api/` - API client (token, errors), endpoint paths, response types and the profile photo
 - `src/auth/` - sign-in state (`AuthProvider`): login, logout and the return to sign-in when the session expires
-- `src/components/` - shared pieces such as `DataTable`, `RecordsTable`, `PasswordChange`, `Subscriptions` and `ThemeToggle`
+- `src/components/` - shared pieces such as `DataTable`, `RecordsTable`, `PasswordChange`, `ProfilePhoto`, `PhotoAvatar`, `AccountMenu`, `Subscriptions` and `ThemeToggle`
 - `src/i18n/` - English and Azerbaijani messages
 - `src/layouts/` - `DashboardLayout` (sidebar and top bar) and `AuthLayout`
 - `src/pages/` - one page per route; `course/` holds the course detail tabs
@@ -64,7 +64,7 @@ Required Actions secrets: `SSH_HOST`, `SSH_USER`, `SSH_PASSWORD`.
 
 ## Versioning
 
-The version is in `package.json`, and the sidebar footer shows it. Bump it with each release.
+The version is in `package.json`, and the sidebar footer shows it. The current version is 0.7.1. Bump it with each release: minor for a new feature, patch for a fix or a copy change.
 
 ## License
 

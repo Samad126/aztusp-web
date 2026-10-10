@@ -10,7 +10,7 @@ export const en = {
   'nav.settings': 'Settings',
   'nav.open': 'Open navigation',
   'nav.source': 'Source code',
-  'nav.logout': 'Logout',
+  'nav.logout': 'Sign out',
   'account.menu': 'Account menu',
 
   'common.retry': 'Retry',
@@ -34,7 +34,7 @@ export const en = {
 
   'login.title': 'Welcome back',
   'login.subtitle': 'Sign in with your student portal account',
-  'login.footer': 'Your password is used to sign in and kept encrypted, so result notifications can check your scores. Logging out does not delete it.',
+  'login.footer': 'Your password is used to sign in and kept encrypted, so result notifications can check your scores. Signing out does not delete it.',
   'login.username': 'Username',
   'login.password': 'Password',
   'login.submit': 'Sign in',
@@ -269,7 +269,7 @@ export const az: Record<MessageKey, string> = {
   'nav.settings': 'Tənzimləmələr',
   'nav.open': 'Naviqasiyanı aç',
   'nav.source': 'Mənbə kodu',
-  'nav.logout': 'Çıxış',
+  'nav.logout': 'Çıxış et',
   'account.menu': 'Hesab menyusu',
 
   'common.retry': 'Yenidən cəhd et',
