@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import AccountMenu from '../components/AccountMenu.tsx'
+import DemoBanner from '../components/DemoBanner.tsx'
 import Sidebar from '../components/Sidebar.tsx'
 import ThemeToggle from '../components/ThemeToggle.tsx'
 import { findNavItem } from '../navigation.ts'
@@ -20,7 +21,7 @@ const drawerPaperSx = {
 export default function DashboardLayout() {
   const navigate = useNavigate()
   const { pathname, search, hash, state } = useLocation()
-  const { username } = useAuth()
+  const { username, demo } = useAuth()
   const { t } = useTranslation()
   const currentPage = findNavItem(pathname)
 
@@ -80,6 +81,7 @@ export default function DashboardLayout() {
         </AppBar>
 
         <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 3 } }}>
+          {demo && <DemoBanner />}
           <Outlet />
         </Box>
       </Box>

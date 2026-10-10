@@ -2,6 +2,8 @@
 
 A React + MUI dashboard for students. They sign in with their university account and see their courses (plan, items, scores and attendance), schedule, grades, attendance, notices and settings. Settings set a profile photo (up to 10 MB), change the site password and change notifications (including Telegram), and switch the theme and the language (English or Azerbaijani). The avatar in the top right shows the student's name and signs them out.
 
+The sign-in page also has a Demo option. It opens the app on built-in sample data without a login. Demo mode never sends a request to the API, and its changes (password, notifications, photo, Telegram) are refused, so it cannot touch a real account.
+
 ## Backend
 
 The data comes from the AZTUSP API, version 2.3.0, which this app is built against. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend), and its interactive docs are at [aztuapi.alakbaroff.com/docs](https://aztuapi.alakbaroff.com/docs).
@@ -31,7 +33,8 @@ bun install
 ## Structure
 
 - `src/api/` - API client (token, errors), endpoint paths, response types and the profile photo
-- `src/auth/` - sign-in state (`AuthProvider`): login, logout and the return to sign-in when the session expires
+- `src/auth/` - sign-in state (`AuthProvider`): login, demo mode, logout and the return to sign-in when the session expires
+- `src/demo/` - sample data for demo mode, and `respond.ts`, which answers requests locally in place of the API
 - `src/components/` - shared pieces such as `DataTable`, `RecordsTable`, `PasswordChange`, `ProfilePhoto`, `PhotoAvatar`, `AccountMenu`, `Subscriptions` and `ThemeToggle`
 - `src/i18n/` - English and Azerbaijani messages
 - `src/layouts/` - `DashboardLayout` (sidebar and top bar) and `AuthLayout`

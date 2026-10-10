@@ -2,7 +2,10 @@ import { createContext, useContext } from 'react'
 
 export interface AuthState {
   username: string | null
+  /** True for the sample-data session, which has no portal account behind it. */
+  demo: boolean
   login: (username: string, password: string) => Promise<void>
+  startDemo: () => void
   logout: () => Promise<void>
 }
 

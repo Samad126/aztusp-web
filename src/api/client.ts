@@ -1,11 +1,14 @@
 // In dev, requests go through the Vite proxy (same origin); in production they hit the API host directly.
 import i18n from '../i18n/index.ts'
+import { demoResponse } from '../demo/respond.ts'
 
 const API_BASE: string =
   import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'https://aztuapi.alakbaroff.com')
 
 const TOKEN_KEY = 'userhelper-token'
 const USER_KEY = 'userhelper-username'
+// Stands in for a real token in demo mode. It is never sent: demo requests are answered from the sample data.
+export const DEMO_TOKEN = 'demo'
 
 export class ApiError extends Error {
   status: number
@@ -46,6 +49,9 @@ export const session = {
   get username() {
     return username
   },
+  get demo() {
+    return token === DEMO_TOKEN
+  },
   set(nextToken: string, nextUsername: string) {
     token = nextToken
     username = nextUsername
@@ -75,7 +81,10 @@ async function send(path: string, init: RequestInit = {}, { keepSession = false 
 
   let response: Response
   try {
-    response = await fetch(API_BASE + path, { ...init, headers })
+    // A demo session gets its answers from the sample data, so no request leaves the browser.
+    response = session.demo
+      ? demoResponse(init.method ?? 'GET', path)
+      : await fetch(API_BASE + path, { ...init, headers })
   } catch {
     throw new ApiError(0, i18n.t('error.network'))
   }

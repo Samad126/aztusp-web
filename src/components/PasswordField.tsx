@@ -20,6 +20,7 @@ export default function PasswordField(props: TextFieldProps) {
               <IconButton
                 edge="end"
                 aria-label={visible ? t('password.hide') : t('password.show')}
+                disabled={props.disabled}
                 onClick={() => setVisible((prev) => !prev)}
               >
                 {visible ? <VisibilityOffOutlinedIcon /> : <VisibilityOutlinedIcon />}
