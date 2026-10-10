@@ -1,15 +1,15 @@
 import type { ElementType } from 'react'
 import type { ListItemButtonProps } from '@mui/material'
 import type { Theme } from '@mui/material/styles'
-import { Box, List, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material'
+import { Box, CircularProgress, List, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material'
 import { alpha } from '@mui/material/styles'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Logo from './Logo.tsx'
 import { HEADER_HEIGHT } from '../layouts/constants.ts'
 import { navItems } from '../navigation.ts'
-import { useAuth } from '../auth/AuthContext.ts'
+import { useSignOut } from '../auth/useSignOut.ts'
 import { useTranslation } from 'react-i18next'
 import { version } from '../../package.json'
 
@@ -27,10 +27,13 @@ const itemSx = {
 function SidebarItem({
   icon: Icon,
   label,
+  busy = false,
   ...props
 }: {
   icon: ElementType
   label: string
+  // Shows a spinner in place of the icon, like the sign-out button on Settings
+  busy?: boolean
   component?: ElementType
   to?: string
   end?: boolean
@@ -42,7 +45,7 @@ function SidebarItem({
   return (
     <ListItemButton sx={itemSx} {...props}>
       <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
-        <Icon />
+        {busy ? <CircularProgress size={20} color="inherit" /> : <Icon />}
       </ListItemIcon>
       <ListItemText primary={label} />
     </ListItemButton>
@@ -50,14 +53,8 @@ function SidebarItem({
 }
 
 export default function Sidebar({ inDrawer = false }: { inDrawer?: boolean }) {
-  const navigate = useNavigate()
-  const { logout } = useAuth()
+  const { signingOut, signOut } = useSignOut()
   const { t } = useTranslation()
-
-  const handleLogout = async () => {
-    await logout()
-    navigate('/login')
-  }
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -107,7 +104,13 @@ export default function Sidebar({ inDrawer = false }: { inDrawer?: boolean }) {
           icon={GitHubIcon}
           label={t('nav.source')}
         />
-        <SidebarItem icon={LogoutIcon} label={t('nav.logout')} onClick={handleLogout} />
+        <SidebarItem
+          icon={LogoutIcon}
+          label={t('nav.logout')}
+          busy={signingOut}
+          disabled={signingOut}
+          onClick={signOut}
+        />
       </List>
     </Box>
   )

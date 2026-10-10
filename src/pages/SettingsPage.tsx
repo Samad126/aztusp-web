@@ -1,11 +1,11 @@
-import { useState, type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import type { ReactNode } from 'react'
 import { Box, Button, CircularProgress, Divider, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ThemeToggle from '../components/ThemeToggle.tsx'
 import Subscriptions from '../components/Subscriptions.tsx'
 import PasswordChange from '../components/PasswordChange.tsx'
 import { useAuth } from '../auth/AuthContext.ts'
+import { useSignOut } from '../auth/useSignOut.ts'
 import { useTranslation } from 'react-i18next'
 import { languages } from '../i18n/messages.ts'
 
@@ -32,16 +32,9 @@ function SettingRow({
 }
 
 export default function SettingsPage() {
-  const navigate = useNavigate()
-  const { username, logout } = useAuth()
+  const { username } = useAuth()
   const { t, i18n } = useTranslation()
-  const [busy, setBusy] = useState(false)
-
-  const handleLogout = async () => {
-    setBusy(true)
-    await logout()
-    navigate('/login')
-  }
+  const { signingOut, signOut } = useSignOut()
 
   return (
     <Stack spacing={3}>
@@ -53,9 +46,9 @@ export default function SettingsPage() {
             <Button
               variant="outlined"
               color="error"
-              disabled={busy}
-              onClick={handleLogout}
-              startIcon={busy ? <CircularProgress size={16} color="inherit" /> : <LogoutIcon />}
+              disabled={signingOut}
+              onClick={signOut}
+              startIcon={signingOut ? <CircularProgress size={16} color="inherit" /> : <LogoutIcon />}
             >
               {t('settings.signOut')}
             </Button>
