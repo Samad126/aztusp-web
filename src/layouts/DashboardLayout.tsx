@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AppBar, Avatar, Box, Drawer, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import Sidebar from '../components/Sidebar.tsx'
@@ -8,18 +7,30 @@ import { findNavItem } from '../navigation.ts'
 import { useAuth } from '../auth/AuthContext.ts'
 import { useTranslation } from 'react-i18next'
 import { initials } from '../lib/format.ts'
-import { DRAWER_WIDTH, HEADER_HEIGHT } from './constants.ts'
+import { DRAWER_WIDTH, HEADER_HEIGHT, MOBILE_DRAWER_WIDTH } from './constants.ts'
 
 const drawerPaperSx = {
-  '& .MuiDrawer-paper': { width: DRAWER_WIDTH, maxWidth: '100vw', boxSizing: 'border-box' },
+  '& .MuiDrawer-paper': {
+    width: { xs: MOBILE_DRAWER_WIDTH, md: DRAWER_WIDTH },
+    maxWidth: '100vw',
+    boxSizing: 'border-box',
+  },
 }
 
 export default function DashboardLayout() {
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const { pathname, search, hash, state } = useLocation()
   const { username } = useAuth()
   const { t } = useTranslation()
   const currentPage = findNavItem(pathname)
+
+  // The open mobile drawer is marked on its own history entry, so the system back button closes it
+  // instead of leaving the page. Closing it from the UI steps back over that entry again.
+  const mobileOpen = Boolean(state?.drawer)
+  const openDrawer = () => navigate({ pathname, search, hash }, { state: { drawer: true } })
+  const closeDrawer = () => {
+    if (mobileOpen) navigate(-1)
+  }
 
   if (!username) return <Navigate to="/login" replace />
 
@@ -30,10 +41,10 @@ export default function DashboardLayout() {
         <Drawer
           variant="temporary"
           open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
+          onClose={closeDrawer}
           sx={{ display: { xs: 'block', md: 'none' }, ...drawerPaperSx }}
         >
-          <Sidebar onNavigate={() => setMobileOpen(false)} />
+          <Sidebar inDrawer />
         </Drawer>
 
         {/* Fixed sidebar on desktop */}
@@ -53,7 +64,7 @@ export default function DashboardLayout() {
             <IconButton
               edge="start"
               aria-label={t('nav.open')}
-              onClick={() => setMobileOpen(true)}
+              onClick={openDrawer}
               sx={{ display: { md: 'none' } }}
             >
               <MenuIcon />

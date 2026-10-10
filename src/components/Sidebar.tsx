@@ -34,6 +34,7 @@ function SidebarItem({
   component?: ElementType
   to?: string
   end?: boolean
+  replace?: boolean
   href?: string
   target?: string
   rel?: string
@@ -48,13 +49,12 @@ function SidebarItem({
   )
 }
 
-export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+export default function Sidebar({ inDrawer = false }: { inDrawer?: boolean }) {
   const navigate = useNavigate()
   const { logout } = useAuth()
   const { t } = useTranslation()
 
   const handleLogout = async () => {
-    onNavigate?.()
     await logout()
     navigate('/login')
   }
@@ -83,7 +83,8 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             component={NavLink}
             to={item.path}
             end={item.path === '/'}
-            onClick={onNavigate}
+            // Inside the drawer, replace its history entry so Back doesn't reopen it
+            replace={inDrawer || undefined}
             icon={item.icon}
             label={t(item.labelKey)}
           />
