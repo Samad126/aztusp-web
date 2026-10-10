@@ -181,3 +181,21 @@ export interface CourseAttendance {
 }
 
 export type CourseTab = 'notices' | 'board' | 'materials' | 'tasks'
+
+// Change notifications (`/me/notifications`) and the Telegram link (`/me/telegram`).
+export interface Subscription {
+  email: string | null
+  fields: string[]
+  telegram_linked: boolean
+  status: 'ok' | 'wrong_password' | 'error'
+  last_checked_at: string | null
+}
+
+export interface TelegramStatus {
+  linked: boolean
+}
+
+export interface TelegramLink {
+  url: string
+  expires_at: string
+}

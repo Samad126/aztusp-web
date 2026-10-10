@@ -64,7 +64,12 @@ export const session = {
   },
 }
 
-async function send(path: string, init: RequestInit = {}) {
+interface SendOptions {
+  /** A 401 from a password check means the site rejected the password, not that the token expired. */
+  keepSession?: boolean
+}
+
+async function send(path: string, init: RequestInit = {}, { keepSession = false }: SendOptions = {}) {
   const headers = new Headers(init.headers)
   if (token) headers.set('Authorization', `Bearer ${token}`)
 
@@ -83,7 +88,7 @@ async function send(path: string, init: RequestInit = {}) {
     } catch {
       // Non-JSON error body (e.g. a gateway page): keep the status text.
     }
-    if (response.status === 401 && token) {
+    if (response.status === 401 && token && !keepSession) {
       session.clear()
       onUnauthorized?.()
     }
@@ -97,13 +102,29 @@ export async function apiGet<T>(path: string): Promise<T> {
   return (await send(path)).json()
 }
 
-export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
-  const response = await send(path, {
-    method: 'POST',
-    headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  })
+async function sendJson<T>(method: string, path: string, body?: unknown, options?: SendOptions): Promise<T> {
+  const response = await send(
+    path,
+    {
+      method,
+      headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    },
+    options,
+  )
   return response.json()
+}
+
+export function apiPost<T>(path: string, body?: unknown): Promise<T> {
+  return sendJson<T>('POST', path, body)
+}
+
+export function apiPut<T>(path: string, body: unknown, options?: SendOptions): Promise<T> {
+  return sendJson<T>('PUT', path, body, options)
+}
+
+export function apiDelete<T = unknown>(path: string): Promise<T> {
+  return sendJson<T>('DELETE', path)
 }
 
 function fileNameFrom(header: string | null) {
