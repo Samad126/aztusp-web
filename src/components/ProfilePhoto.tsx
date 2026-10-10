@@ -1,11 +1,12 @@
 import { useRef, useState, type ChangeEvent } from 'react'
-import { Alert, Avatar, Button, CircularProgress, Paper, Skeleton, Stack, Typography } from '@mui/material'
+import { Alert, Button, CircularProgress, Paper, Skeleton, Stack, Typography } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../api/client.ts'
 import { PHOTO_MAX_BYTES, PHOTO_TYPES, deletePhoto, uploadPhoto, usePhotoUrl } from '../api/photo.ts'
 import { useAuth } from '../auth/AuthContext.ts'
+import PhotoAvatar from './PhotoAvatar.tsx'
 import { initials } from '../lib/format.ts'
 
 export default function ProfilePhoto() {
@@ -66,13 +67,13 @@ export default function ProfilePhoto() {
         {photo === undefined ? (
           <Skeleton variant="circular" width={96} height={96} />
         ) : (
-          <Avatar
+          <PhotoAvatar
             alt={username ?? ''}
-            src={photo ?? undefined}
+            src={photo}
             sx={{ width: 96, height: 96, bgcolor: 'primary.main', color: 'primary.contrastText', fontSize: 32, fontWeight: 700 }}
           >
             {initials(username ?? '')}
-          </Avatar>
+          </PhotoAvatar>
         )}
 
         <Stack direction="row" spacing={1.5} sx={{ flexWrap: 'wrap', rowGap: 1.5 }}>

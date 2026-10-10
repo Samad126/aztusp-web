@@ -3,7 +3,7 @@ import { apiDelete, apiGetBlob, apiPutFile, session } from './client.ts'
 import { endpoints } from './endpoints.ts'
 
 // The same limits as `PUT /me/photo` in the backend.
-export const PHOTO_MAX_BYTES = 2 * 1024 * 1024
+export const PHOTO_MAX_BYTES = 10 * 1024 * 1024
 export const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 // The photo needs the API token, so it cannot be a plain image URL. It is fetched once and kept as a blob URL that

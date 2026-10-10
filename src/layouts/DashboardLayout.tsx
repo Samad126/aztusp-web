@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AppBar, Avatar, Box, Drawer, IconButton, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
+import PhotoAvatar from '../components/PhotoAvatar.tsx'
 import Sidebar from '../components/Sidebar.tsx'
 import ThemeToggle from '../components/ThemeToggle.tsx'
 import { findNavItem } from '../navigation.ts'
@@ -77,13 +78,13 @@ export default function DashboardLayout() {
             </Typography>
 
             <ThemeToggle />
-            <Avatar
+            <PhotoAvatar
               alt={username}
-              src={photo ?? undefined}
+              src={photo}
               sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 700, fontSize: 16 }}
             >
               {initials(username)}
-            </Avatar>
+            </PhotoAvatar>
           </Toolbar>
         </AppBar>
 

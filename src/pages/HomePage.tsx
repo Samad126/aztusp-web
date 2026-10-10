@@ -1,9 +1,10 @@
-import { Avatar, Box, Chip, Paper, Stack, Typography } from '@mui/material'
+import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined'
 import DonutLargeOutlinedIcon from '@mui/icons-material/DonutLargeOutlined'
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined'
 import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined'
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
+import PhotoAvatar from '../components/PhotoAvatar.tsx'
 import StatCard from '../components/StatCard.tsx'
 import KeyValueGrid from '../components/KeyValueGrid.tsx'
 import { Async } from '../components/PageState.tsx'
@@ -41,9 +42,9 @@ export default function HomePage() {
               borderColor: 'divider',
             }}
           >
-            <Avatar
+            <PhotoAvatar
               alt={fullName}
-              src={photo ?? undefined}
+              src={photo}
               sx={{
                 width: 72,
                 height: 72,
@@ -54,7 +55,7 @@ export default function HomePage() {
               }}
             >
               {initials(fullName)}
-            </Avatar>
+            </PhotoAvatar>
             <Box sx={{ flexGrow: 1, minWidth: 220 }}>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
                 {fullName || info.english_name}
