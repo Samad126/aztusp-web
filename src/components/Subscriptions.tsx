@@ -21,7 +21,6 @@ import { endpoints } from '../api/endpoints.ts'
 import type { Subscription, TelegramLink, TelegramStatus } from '../api/types.ts'
 import { fieldLabel } from '../i18n/index.ts'
 import { Async } from './PageState.tsx'
-import PasswordField from './PasswordField.tsx'
 
 // The same fields the grade watcher can watch, and its default (`WATCHABLE_FIELDS` in the backend).
 const WATCHABLE_FIELDS = ['course_type', 'credits', 'final_score', 'grade', 'retake']
@@ -187,16 +186,15 @@ function SubscriptionForm({
   onChanged: () => void
 }) {
   const { t, i18n } = useTranslation()
-  // Filled in once, from the saved settings; the password is never sent back, so it is always typed again.
+  // Filled in once, from the saved settings. No password is asked for: the one saved at sign-in is used.
   const [email, setEmail] = useState(current?.email ?? '')
   const [fields, setFields] = useState<string[]>(current?.fields ?? DEFAULT_FIELDS)
-  const [password, setPassword] = useState('')
   const [busy, setBusy] = useState<'save' | 'off' | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
 
   const hasContact = email.trim() !== '' || telegramLinked
-  const canSave = busy === null && fields.length > 0 && password !== '' && hasContact
+  const canSave = busy === null && fields.length > 0 && hasContact
 
   const toggleField = (name: string, checked: boolean) =>
     setFields(WATCHABLE_FIELDS.filter((item) => (item === name ? checked : fields.includes(item))))
@@ -207,11 +205,12 @@ function SubscriptionForm({
     setNotice(null)
     try {
       await request()
-      setPassword('')
       setNotice(done)
       onChanged()
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : t('error.network'))
+      // A 401 on save means the site rejected the password saved at sign-in. The session is kept for that (see `send`).
+      const rejected = action === 'save' && caught instanceof ApiError && caught.status === 401
+      setError(rejected ? t('subscriptions.relogin') : caught instanceof Error ? caught.message : t('error.network'))
     } finally {
       setBusy(null)
     }
@@ -221,7 +220,7 @@ function SubscriptionForm({
     event.preventDefault()
     void run(
       'save',
-      () => apiPut(endpoints.notifications, { password, email: email.trim() || null, fields }, { keepSession: true }),
+      () => apiPut(endpoints.notifications, { email: email.trim() || null, fields }, { keepSession: true }),
       t('subscriptions.saved'),
     )
   }
@@ -272,17 +271,6 @@ function SubscriptionForm({
           </FormGroup>
           {fields.length === 0 && <FormHelperText>{t('subscriptions.fieldsRequired')}</FormHelperText>}
         </FormControl>
-
-        <PasswordField
-          name="password"
-          label={t('subscriptions.password')}
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          autoComplete="current-password"
-          helperText={t('subscriptions.passwordHint')}
-          required
-          disabled={busy !== null}
-        />
 
         {error && <Alert severity="error">{error}</Alert>}
         {notice && <Alert severity="success">{notice}</Alert>}

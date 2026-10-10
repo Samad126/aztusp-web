@@ -74,7 +74,7 @@ export default function PasswordChange() {
           />
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {t('password.subscriptionsHint')}
+            {t('password.notificationsHint')}
           </Typography>
 
           {error && <Alert severity="error">{error}</Alert>}
