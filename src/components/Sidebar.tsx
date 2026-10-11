@@ -1,56 +1,16 @@
-import type { ElementType } from 'react'
-import type { ListItemButtonProps } from '@mui/material'
-import type { Theme } from '@mui/material/styles'
-import { Box, CircularProgress, List, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material'
-import { alpha } from '@mui/material/styles'
-import { NavLink } from 'react-router-dom'
+import { Box, List, Typography } from '@mui/material'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import LogoutIcon from '@mui/icons-material/Logout'
-import Logo from './Logo.tsx'
-import { HEADER_HEIGHT } from '../layouts/constants.ts'
-import { navItems } from '../navigation.ts'
-import { useSignOut } from '../auth/useSignOut.ts'
+import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { version } from '../../package.json'
+import { useSignOut } from '../auth/useSignOut.ts'
+import { HEADER_HEIGHT } from '../layouts/constants.ts'
+import { navItems } from '../navigation.ts'
+import Logo from './Logo.tsx'
+import SidebarItem from './SidebarItem.tsx'
 
 const SOURCE_CODE_URL = 'https://github.com/Samad126/aztusp-web'
-
-const itemSx = {
-  minHeight: 56,
-  px: 3,
-  '& .MuiListItemText-primary': { fontWeight: 500 },
-  '&.active': {
-    bgcolor: (theme: Theme) => alpha(theme.palette.primary.main, 0.16),
-  },
-}
-
-function SidebarItem({
-  icon: Icon,
-  label,
-  busy = false,
-  ...props
-}: {
-  icon: ElementType
-  label: string
-  // Shows a spinner in place of the icon, like the sign-out button on Settings
-  busy?: boolean
-  component?: ElementType
-  to?: string
-  end?: boolean
-  replace?: boolean
-  href?: string
-  target?: string
-  rel?: string
-} & ListItemButtonProps) {
-  return (
-    <ListItemButton sx={itemSx} {...props}>
-      <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
-        {busy ? <CircularProgress size={20} color="inherit" /> : <Icon />}
-      </ListItemIcon>
-      <ListItemText primary={label} />
-    </ListItemButton>
-  )
-}
 
 export default function Sidebar({ inDrawer = false }: { inDrawer?: boolean }) {
   const { signingOut, signOut } = useSignOut()

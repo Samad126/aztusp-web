@@ -1,7 +1,10 @@
 import i18n from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
-import { az, en, languages, type MessageKey } from './messages.ts'
+import { humanize } from '../lib/format.ts'
+import { languages } from './languages.ts'
+import { az } from './locales/az.ts'
+import { en, type MessageKey } from './locales/en.ts'
 
 i18n
   .use(LanguageDetector)
@@ -32,8 +35,7 @@ i18n.on('languageChanged', syncDocumentLanguage)
 export function fieldLabel(key: string) {
   const messageKey = `field.${key}`
   if (i18n.exists(messageKey)) return i18n.t(messageKey as MessageKey)
-  const words = key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ').trim().toLowerCase()
-  return words.charAt(0).toUpperCase() + words.slice(1)
+  return humanize(key)
 }
 
 const WEEKDAY_KEYS = ['weekday.monday', 'weekday.tuesday', 'weekday.wednesday', 'weekday.thursday', 'weekday.friday'] as const

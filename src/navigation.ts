@@ -6,7 +6,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 
-import type { MessageKey } from './i18n/messages.ts'
+import type { MessageKey } from './i18n/locales/en.ts'
 
 export const navItems: { labelKey: MessageKey; path: string; icon: typeof DashboardOutlinedIcon }[] = [
   { labelKey: 'nav.home', path: '/', icon: DashboardOutlinedIcon },

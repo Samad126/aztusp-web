@@ -1,8 +1,10 @@
 import { endpoints } from '../api/endpoints.ts'
 import type { CourseTab, ScheduleView } from '../api/types.ts'
 import i18n from '../i18n/index.ts'
-import { ATTACHMENT_PATH, attachmentText, noticeDetails, noticesPage, profile, scheduleFor, scores, subscription, telegram } from './data.ts'
 import { demoCourses } from './courses.ts'
+import { ATTACHMENT_PATH, attachmentText, noticeDetails, noticesPage } from './notices.ts'
+import { scheduleFor } from './schedule.ts'
+import { profile, scores, subscription, telegram } from './student.ts'
 
 const COURSE_TABS: CourseTab[] = ['notices', 'board', 'materials', 'tasks']
 

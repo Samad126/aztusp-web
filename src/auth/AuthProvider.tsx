@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { apiPost, DEMO_TOKEN, session } from '../api/client.ts'
+import { apiPost } from '../api/client.ts'
 import { endpoints } from '../api/endpoints.ts'
+import { DEMO_TOKEN, session } from '../api/session.ts'
 import { clearApiCache } from '../api/useApi.ts'
-import { DEMO_USERNAME } from '../demo/data.ts'
+import { DEMO_USERNAME } from '../demo/student.ts'
 import { AuthContext } from './AuthContext.ts'
 
 export function AuthProvider({ children }: { children: ReactNode }) {

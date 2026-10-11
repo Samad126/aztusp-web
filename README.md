@@ -32,15 +32,15 @@ bun install
 
 ## Structure
 
-- `src/api/` - API client (token, errors), endpoint paths, response types and the profile photo
+- `src/api/` - API client (`client.ts`: requests and errors), the saved sign-in (`session.ts`), endpoint paths, response types and the profile photo
 - `src/auth/` - sign-in state (`AuthProvider`): login, demo mode, logout and the return to sign-in when the session expires
-- `src/demo/` - sample data for demo mode, and `respond.ts`, which answers requests locally in place of the API
-- `src/components/` - shared pieces such as `DataTable`, `RecordsTable`, `PasswordChange`, `ProfilePhoto`, `PhotoAvatar`, `AccountMenu`, `Subscriptions` and `ThemeToggle`
-- `src/i18n/` - English and Azerbaijani messages
+- `src/demo/` - sample data for demo mode (`student.ts`, `schedule.ts`, `notices.ts`, `courses.ts`), and `respond.ts`, which answers requests locally in place of the API
+- `src/components/` - shared pieces such as `PhotoAvatar`, `AccountMenu`, `MetricTile` and `ThemeToggle`. `table/` holds `DataTable` and `RecordsTable`, `timetable/` the schedule views, and `settings/` the cards on the Settings page (`PasswordChange`, `ProfilePhoto`, `Subscriptions`)
+- `src/i18n/` - English and Azerbaijani messages in `locales/`, and the language list in `languages.ts`
 - `src/layouts/` - `DashboardLayout` (sidebar and top bar) and `AuthLayout`
-- `src/pages/` - one page per route; `course/` holds the course detail tabs
+- `src/pages/` - one page per route; `course/` holds the course detail tabs and `attendance/` the columns of the attendance overview
 - `src/theme/` - light and dark palettes and the color-mode provider
-- `src/lib/` - formatting and attendance helpers
+- `src/lib/` - formatting, attendance helpers and `storage.ts` (localStorage with blocked-storage guards); `timetable/` shapes lessons (`model.ts`) and works out the weeks (`week.ts`)
 - `src/navigation.ts` - sidebar items (label, route, icon)
 
 ## Docker

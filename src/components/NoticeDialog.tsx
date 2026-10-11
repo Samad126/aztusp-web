@@ -1,67 +1,11 @@
-import { useState } from 'react'
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Skeleton,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Alert, Box, Dialog, DialogContent, DialogTitle, IconButton, Skeleton, Stack, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import AttachFileIcon from '@mui/icons-material/AttachFile'
-import DownloadIcon from '@mui/icons-material/Download'
-import { downloadFile } from '../api/client.ts'
 import { endpoints } from '../api/endpoints.ts'
 import { useApi } from '../api/useApi.ts'
-import type { NoticeAttachment, NoticeDetail } from '../api/types.ts'
+import type { NoticeDetail } from '../api/types.ts'
 import { useTranslation } from 'react-i18next'
+import AttachmentButton from './AttachmentButton.tsx'
 import { ErrorState } from './PageState.tsx'
-
-function AttachmentButton({ attachment }: { attachment: NoticeAttachment }) {
-  const { t } = useTranslation()
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const handleClick = async () => {
-    setBusy(true)
-    setError(null)
-    try {
-      await downloadFile(attachment.download, attachment.name)
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : t('error.download'))
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  return (
-    <Box>
-      <Button
-        variant="outlined"
-        size="small"
-        disabled={busy || !attachment.download}
-        onClick={handleClick}
-        startIcon={busy ? <CircularProgress size={16} /> : <AttachFileIcon />}
-        endIcon={<DownloadIcon />}
-        sx={{ maxWidth: '100%', justifyContent: 'flex-start' }}
-      >
-        <Typography noWrap variant="body2">
-          {attachment.name}
-        </Typography>
-      </Button>
-      {error && (
-        <Typography variant="caption" color="error" sx={{ display: 'block', mt: 0.5 }}>
-          {error}
-        </Typography>
-      )}
-    </Box>
-  )
-}
 
 export default function NoticeDialog({ noticeId, onClose }: { noticeId: string | null; onClose: () => void }) {
   const { t } = useTranslation()

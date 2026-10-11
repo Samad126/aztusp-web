@@ -1,46 +1,14 @@
-import type { ReactNode } from 'react'
-import { Box, Button, CircularProgress, Divider, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Divider, Paper, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ThemeToggle from '../components/ThemeToggle.tsx'
-import Subscriptions from '../components/Subscriptions.tsx'
-import PasswordChange from '../components/PasswordChange.tsx'
-import ProfilePhoto from '../components/ProfilePhoto.tsx'
+import PasswordChange from '../components/settings/PasswordChange.tsx'
+import ProfilePhoto from '../components/settings/ProfilePhoto.tsx'
+import SettingRow from '../components/settings/SettingRow.tsx'
+import Subscriptions from '../components/settings/Subscriptions.tsx'
 import { useAuth } from '../auth/AuthContext.ts'
 import { useSignOut } from '../auth/useSignOut.ts'
 import { useTranslation } from 'react-i18next'
-import { languages } from '../i18n/messages.ts'
-
-function SettingRow({
-  title,
-  description,
-  control,
-}: {
-  title: string
-  description: string
-  control: ReactNode
-}) {
-  // On phones the control goes under the text, so the text has the full width instead of a narrow column.
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: { xs: 'column', sm: 'row' },
-        alignItems: { xs: 'flex-start', sm: 'center' },
-        justifyContent: 'space-between',
-        gap: { xs: 1.5, sm: 2 },
-        py: 2,
-      }}
-    >
-      <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
-        <Typography sx={{ fontWeight: 500 }}>{title}</Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {description}
-        </Typography>
-      </Box>
-      {control}
-    </Box>
-  )
-}
+import { languages } from '../i18n/languages.ts'
 
 export default function SettingsPage() {
   const { username } = useAuth()

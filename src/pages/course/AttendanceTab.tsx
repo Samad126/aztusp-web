@@ -1,152 +1,19 @@
-import { useMemo, useState } from 'react'
-import { Box, Chip, LinearProgress, Paper, Stack, Tooltip, Typography } from '@mui/material'
-import { alpha } from '@mui/material/styles'
-import AbsenceInput from '../../components/AbsenceInput.tsx'
-import DataTable, { type Column } from '../../components/DataTable.tsx'
+import { useMemo } from 'react'
+import { Chip, Stack, Tooltip } from '@mui/material'
 import KeyValueGrid from '../../components/KeyValueGrid.tsx'
 import { Async, EmptyState } from '../../components/PageState.tsx'
+import DataTable from '../../components/table/DataTable.tsx'
+import type { Column } from '../../components/table/tableRows.ts'
 import { endpoints } from '../../api/endpoints.ts'
 import { useApi } from '../../api/useApi.ts'
-import type { AttendanceMark, AttendanceStudent, CourseAttendance, ProfilePage } from '../../api/types.ts'
+import type { AttendanceStudent, CourseAttendance, ProfilePage } from '../../api/types.ts'
 import { fieldLabel } from '../../i18n/index.ts'
 import { useTranslation } from 'react-i18next'
-import { formatPercent, percentTone, toNumber } from '../../lib/format.ts'
-import { countHeld, countMarks, estimateRate, findMyRow, parseLessons } from '../../lib/attendance.ts'
-
-const markColor = {
-  present: 'success',
-  absent: 'error',
-  not_entered: 'text',
-} as const
-
-function MarkCell({ mark, date }: { mark: AttendanceMark | undefined; date: string | null }) {
-  const { t } = useTranslation()
-  if (!mark) return <span>—</span>
-  const tone = mark.mark ? markColor[mark.mark] : 'text'
-  const label = mark.status || '·'
-  return (
-    <Tooltip title={`${date ?? t('attendance.notHeld')}${mark.mark ? ` — ${t(`attendance.${mark.mark}.long` as const)}` : ''}`} arrow>
-      <Box
-        sx={(theme) => {
-          const base = tone === 'text' ? theme.palette.text.secondary : theme.palette[tone].main
-          return {
-            display: 'inline-grid',
-            placeItems: 'center',
-            minWidth: 28,
-            height: 28,
-            px: 0.5,
-            borderRadius: 1,
-            fontSize: 12,
-            fontWeight: 700,
-            color: base,
-            bgcolor: alpha(base, tone === 'text' ? 0.08 : 0.16),
-          }
-        }}
-      >
-        {label}
-      </Box>
-    </Tooltip>
-  )
-}
-
-export function AttendanceSummary({ attendance, student }: { attendance: CourseAttendance; student: AttendanceStudent | undefined }) {
-  const { t } = useTranslation()
-  const counts = countMarks(student)
-  const percent = toNumber(student?.percent ?? attendance.header.percent)
-  const tone = percentTone(percent)
-
-  const stats = [
-    { label: t('attendance.rate'), value: student?.percent ?? attendance.header.percent ?? '—' },
-    { label: t('common.score'), value: student?.score ?? attendance.header.score ?? '—' },
-    { label: t('attendance.present'), value: counts.present },
-    { label: t('attendance.absent'), value: counts.absent },
-    { label: t('attendance.held'), value: attendance.sessions.filter((session) => session.date).length },
-    { label: t('attendance.planned'), value: attendance.sessions.length },
-  ]
-
-  return (
-    <Box
-      sx={{
-        display: 'grid',
-        gap: 2,
-        gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 150px), 1fr))',
-      }}
-    >
-      {stats.map((stat, index) => (
-        <Paper key={stat.label} elevation={0} sx={{ p: 2, border: 1, borderColor: 'divider' }}>
-          <Typography variant="overline" sx={{ color: 'text.secondary' }}>
-            {stat.label}
-          </Typography>
-          <Typography
-            variant="h5"
-            sx={{ fontWeight: 700, color: index === 0 && tone !== 'default' ? `${tone}.main` : 'text.primary' }}
-          >
-            {stat.value}
-          </Typography>
-          {index === 0 && (
-            <LinearProgress
-              variant="determinate"
-              color={tone === 'default' ? 'primary' : tone}
-              value={Math.min(100, percent ?? 0)}
-              sx={{ mt: 1, height: 6, borderRadius: 3 }}
-            />
-          )}
-        </Paper>
-      ))}
-    </Box>
-  )
-}
-
-/** Estimates the student's rate and counts if they miss the lessons typed in. Nothing is saved or sent. */
-function AbsenceSimulation({ attendance, student }: { attendance: CourseAttendance; student: AttendanceStudent }) {
-  const { t, i18n } = useTranslation()
-  const [absence, setAbsence] = useState('')
-  const lessons = parseLessons(absence)
-  const counts = countMarks(student)
-  const held = countHeld(attendance)
-  const remaining = Math.max(0, attendance.sessions.length - held)
-  const before = toNumber(student.percent)
-  const after = estimateRate(attendance, student, lessons)
-
-  const stats = [
-    {
-      label: t('absence.column'),
-      value: `${before === null ? '—' : formatPercent(before, i18n.language)} → ${after === null ? '—' : formatPercent(after, i18n.language)}`,
-      tone: percentTone(after),
-    },
-    { label: t('attendance.absent'), value: `${counts.absent} → ${counts.absent + lessons}`, tone: 'default' as const },
-    { label: t('attendance.held'), value: `${held} → ${held + lessons}`, tone: 'default' as const },
-  ]
-
-  return (
-    <Paper elevation={0} sx={{ p: 2.5, border: 1, borderColor: 'divider' }}>
-      <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-        {t('absence.title')}
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-        {t('absence.description')}
-      </Typography>
-      <Box sx={{ display: 'grid', gap: 2, alignItems: 'start', gridTemplateColumns: { xs: '1fr', md: 'auto 1fr' } }}>
-        <AbsenceInput value={absence} onChange={setAbsence} helperText={t('absence.remaining', { remaining })} />
-        <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 150px), 1fr))' }}>
-          {stats.map((stat) => (
-            <Paper key={stat.label} elevation={0} sx={{ p: 2, border: 1, borderColor: 'divider' }}>
-              <Typography variant="overline" sx={{ color: 'text.secondary' }}>
-                {stat.label}
-              </Typography>
-              <Typography
-                variant="h5"
-                sx={{ fontWeight: 700, color: stat.tone === 'default' ? 'text.primary' : `${stat.tone}.main` }}
-              >
-                {stat.value}
-              </Typography>
-            </Paper>
-          ))}
-        </Box>
-      </Box>
-    </Paper>
-  )
-}
+import { percentTone, toNumber } from '../../lib/format.ts'
+import { findMyRow } from '../../lib/attendance.ts'
+import AbsenceSimulation from './attendance/AbsenceSimulation.tsx'
+import AttendanceSummary from './attendance/AttendanceSummary.tsx'
+import MarkCell from './attendance/MarkCell.tsx'
 
 export default function AttendanceTab({ courseId }: { courseId: string }) {
   const { t } = useTranslation()

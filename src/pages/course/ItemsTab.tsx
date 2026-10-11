@@ -1,5 +1,5 @@
 import { Async, EmptyState } from '../../components/PageState.tsx'
-import RecordsTable from '../../components/RecordsTable.tsx'
+import RecordsTable from '../../components/table/RecordsTable.tsx'
 import { endpoints } from '../../api/endpoints.ts'
 import { useApi } from '../../api/useApi.ts'
 import { useTranslation } from 'react-i18next'

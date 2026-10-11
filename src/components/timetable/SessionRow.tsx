@@ -1,57 +1,14 @@
-import { useMemo } from 'react'
 import { Box, Chip, Stack, Typography } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined'
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import { useTranslation } from 'react-i18next'
-import { lessonTypeLabel, weekdayLabel, weekLabel } from '../i18n/index.ts'
-import { buildList, filterDaysWeek, type ScheduleItem, type Week } from '../lib/timetable.ts'
-import TimetableFrame from './TimetableFrame.tsx'
+import { lessonTypeLabel, weekLabel } from '../../i18n/index.ts'
+import type { ScheduleItem } from '../../lib/timetable/model.ts'
 
-/** The lessons as a list, one group per school day, with the time, subject, teacher, room and week of each. Days with no lessons are listed too. */
-export default function TimetableList({
-  rows,
-  title,
-  subtitle,
-  week = null,
-}: {
-  rows: Record<string, string>[]
-  title?: string
-  subtitle?: string
-  /** The week to show, or `null` for every week. */
-  week?: Week | null
-}) {
-  const { t } = useTranslation()
-  const days = useMemo(() => filterDaysWeek(buildList(rows), week), [rows, week])
-
-  return (
-    <TimetableFrame title={title} subtitle={subtitle}>
-      <Stack spacing={3} sx={{ p: 2.5 }}>
-        {days.map((day) => (
-          <Box key={day.name}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.25 }}>
-              {weekdayLabel(day.index, day.name)}
-            </Typography>
-            {day.items.length === 0 ? (
-              <Typography sx={{ fontSize: 13, color: 'text.primary', opacity: 0.7, px: 0.5 }}>
-                {t('schedule.noLessonsDay')}
-              </Typography>
-            ) : (
-              <Stack spacing={1}>
-                {day.items.map((item, index) => (
-                  <SessionRow key={index} item={item} />
-                ))}
-              </Stack>
-            )}
-          </Box>
-        ))}
-      </Stack>
-    </TimetableFrame>
-  )
-}
-
-function SessionRow({ item }: { item: ScheduleItem }) {
+/** One lesson in the list view: the time, then the course, teacher and room (or the text the university printed), with its week and type. */
+export default function SessionRow({ item }: { item: ScheduleItem }) {
   const { t } = useTranslation()
   const isLab = item.type === 'lab'
 

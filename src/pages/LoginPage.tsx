@@ -4,7 +4,7 @@ import { Alert, Box, Button, CircularProgress, Stack, TextField, ToggleButton, T
 import AuthLayout from '../layouts/AuthLayout.tsx'
 import PasswordField from '../components/PasswordField.tsx'
 import { useAuth } from '../auth/AuthContext.ts'
-import { DEMO_USERNAME } from '../demo/data.ts'
+import { DEMO_USERNAME } from '../demo/student.ts'
 import { useTranslation } from 'react-i18next'
 
 type Mode = 'live' | 'demo'

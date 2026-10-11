@@ -3,32 +3,26 @@ import { Link, MenuItem, Stack, TextField, ToggleButton, ToggleButtonGroup, Typo
 import ViewModuleOutlinedIcon from '@mui/icons-material/ViewModuleOutlined'
 import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined'
 import { Async, EmptyState, PageHeader } from '../components/PageState.tsx'
-import TimetableGrid from '../components/TimetableGrid.tsx'
-import TimetableList from '../components/TimetableList.tsx'
+import TimetableGrid from '../components/timetable/TimetableGrid.tsx'
+import TimetableList from '../components/timetable/TimetableList.tsx'
 import { endpoints } from '../api/endpoints.ts'
 import { useApi } from '../api/useApi.ts'
 import { useTranslation } from 'react-i18next'
 import type { SchedulePage as ScheduleData, ScheduleView } from '../api/types.ts'
 import { weekLabel } from '../i18n/index.ts'
-import { buildGrid, buildList, currentWeek, gridFromApi, resolveWeek, type WeekFilter } from '../lib/timetable.ts'
+import { readStorage, writeStorage } from '../lib/storage.ts'
+import { buildGrid, buildList, gridFromApi } from '../lib/timetable/model.ts'
+import { currentWeek, resolveWeek, type WeekFilter } from '../lib/timetable/week.ts'
 
 const VIEW_KEY = 'userhelper-schedule-view'
 
-// The view the student last chose. Storage can be blocked, so a failed read falls back to the grid.
+// The view the student last chose. Anything but a saved 'list' (including blocked storage) falls back to the grid.
 function savedView(): ScheduleView {
-  try {
-    return window.localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'grid'
-  } catch {
-    return 'grid'
-  }
+  return readStorage(VIEW_KEY) === 'list' ? 'list' : 'grid'
 }
 
 function rememberView(view: ScheduleView) {
-  try {
-    window.localStorage.setItem(VIEW_KEY, view)
-  } catch {
-    // Storage blocked: the choice lasts until the page is left.
-  }
+  writeStorage(VIEW_KEY, view)
 }
 
 export default function SchedulePage() {

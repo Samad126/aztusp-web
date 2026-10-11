@@ -1,7 +1,7 @@
 import { Paper, Stack, Typography } from '@mui/material'
 import KeyValueGrid from '../../components/KeyValueGrid.tsx'
 import { Async, EmptyState } from '../../components/PageState.tsx'
-import RecordsTable from '../../components/RecordsTable.tsx'
+import RecordsTable from '../../components/table/RecordsTable.tsx'
 import { endpoints } from '../../api/endpoints.ts'
 import { useApi } from '../../api/useApi.ts'
 import type { LecturePlan } from '../../api/types.ts'

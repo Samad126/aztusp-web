@@ -1,6 +1,7 @@
 import { useEffect, useSyncExternalStore } from 'react'
-import { apiDelete, apiGetBlob, apiPutFile, session } from './client.ts'
+import { apiDelete, apiGetBlob, apiPutFile } from './client.ts'
 import { endpoints } from './endpoints.ts'
+import { session } from './session.ts'
 
 // The same limits as `PUT /me/photo` in the backend.
 export const PHOTO_MAX_BYTES = 10 * 1024 * 1024

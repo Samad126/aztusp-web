@@ -1,14 +1,10 @@
 // In dev, requests go through the Vite proxy (same origin); in production they hit the API host directly.
 import i18n from '../i18n/index.ts'
 import { demoResponse } from '../demo/respond.ts'
+import { session } from './session.ts'
 
 const API_BASE: string =
   import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'https://aztuapi.alakbaroff.com')
-
-const TOKEN_KEY = 'userhelper-token'
-const USER_KEY = 'userhelper-username'
-// Stands in for a real token in demo mode. It is never sent: demo requests are answered from the sample data.
-export const DEMO_TOKEN = 'demo'
 
 export class ApiError extends Error {
   status: number
@@ -20,56 +16,6 @@ export class ApiError extends Error {
   }
 }
 
-function read(key: string) {
-  try {
-    return window.localStorage.getItem(key)
-  } catch {
-    return null
-  }
-}
-
-function write(key: string, value: string | null) {
-  try {
-    if (value === null) window.localStorage.removeItem(key)
-    else window.localStorage.setItem(key, value)
-  } catch {
-    // Storage blocked: the session lasts until the page is reloaded.
-  }
-}
-
-// Kept in memory too, so a blocked localStorage doesn't break the current session.
-let token = read(TOKEN_KEY)
-let username = read(USER_KEY)
-let onUnauthorized: (() => void) | null = null
-
-export const session = {
-  get token() {
-    return token
-  },
-  get username() {
-    return username
-  },
-  get demo() {
-    return token === DEMO_TOKEN
-  },
-  set(nextToken: string, nextUsername: string) {
-    token = nextToken
-    username = nextUsername
-    write(TOKEN_KEY, nextToken)
-    write(USER_KEY, nextUsername)
-  },
-  clear() {
-    token = null
-    username = null
-    write(TOKEN_KEY, null)
-    write(USER_KEY, null)
-  },
-  /** Called when the API rejects the token (expired portal session or replaced token). */
-  onUnauthorized(handler: (() => void) | null) {
-    onUnauthorized = handler
-  },
-}
-
 interface SendOptions {
   /** A 401 from a password check means the site rejected the password, not that the token expired. */
   keepSession?: boolean
@@ -77,7 +23,7 @@ interface SendOptions {
 
 async function send(path: string, init: RequestInit = {}, { keepSession = false }: SendOptions = {}) {
   const headers = new Headers(init.headers)
-  if (token) headers.set('Authorization', `Bearer ${token}`)
+  if (session.token) headers.set('Authorization', `Bearer ${session.token}`)
 
   let response: Response
   try {
@@ -99,10 +45,7 @@ async function send(path: string, init: RequestInit = {}, { keepSession = false 
     } catch {
       // Non-JSON error body (e.g. a gateway page): keep the status text.
     }
-    if (response.status === 401 && token && !keepSession) {
-      session.clear()
-      onUnauthorized?.()
-    }
+    if (response.status === 401 && session.token && !keepSession) session.expire()
     if (response.status === 502 || response.status === 504) message = i18n.t('error.portal')
     throw new ApiError(response.status, message)
   }

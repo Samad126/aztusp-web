@@ -1,13 +1,14 @@
 import { useRef, useState, type ChangeEvent } from 'react'
-import { Alert, Button, CircularProgress, Paper, Skeleton, Stack, Typography } from '@mui/material'
+import { Alert, Button, CircularProgress, Skeleton, Stack } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined'
 import { useTranslation } from 'react-i18next'
-import { ApiError } from '../api/client.ts'
-import { PHOTO_MAX_BYTES, PHOTO_TYPES, deletePhoto, uploadPhoto, usePhotoUrl } from '../api/photo.ts'
-import { useAuth } from '../auth/AuthContext.ts'
-import PhotoAvatar from './PhotoAvatar.tsx'
-import { initials } from '../lib/format.ts'
+import { ApiError } from '../../api/client.ts'
+import { PHOTO_MAX_BYTES, PHOTO_TYPES, deletePhoto, uploadPhoto, usePhotoUrl } from '../../api/photo.ts'
+import { useAuth } from '../../auth/AuthContext.ts'
+import { initials } from '../../lib/format.ts'
+import PhotoAvatar from '../PhotoAvatar.tsx'
+import SettingsSection from './SettingsSection.tsx'
 
 export default function ProfilePhoto() {
   const { t } = useTranslation()
@@ -54,13 +55,7 @@ export default function ProfilePhoto() {
   }
 
   return (
-    <Paper elevation={0} sx={{ maxWidth: 720, px: 3, py: 2.5, border: 1, borderColor: 'divider' }}>
-      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-        {t('photo.title')}
-      </Typography>
-      <Typography variant="body2" sx={{ mt: 0.5, color: 'text.secondary' }}>
-        {t('photo.description')}
-      </Typography>
+    <SettingsSection title={t('photo.title')} description={t('photo.description')}>
       <input ref={inputRef} type="file" accept={PHOTO_TYPES.join(',')} hidden onChange={handleFile} />
 
       <Stack
@@ -114,6 +109,6 @@ export default function ProfilePhoto() {
           {notice}
         </Alert>
       )}
-    </Paper>
+    </SettingsSection>
   )
 }

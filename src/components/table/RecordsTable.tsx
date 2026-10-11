@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { Link } from '@mui/material'
-import DataTable, { type Column } from './DataTable.tsx'
-import { fieldLabel } from '../i18n/index.ts'
+import { fieldLabel } from '../../i18n/index.ts'
 import { useTranslation } from 'react-i18next'
-import { isUrl } from '../lib/format.ts'
+import { isUrl } from '../../lib/format.ts'
+import DataTable from './DataTable.tsx'
+import type { Column } from './tableRows.ts'
 
 const HIDDEN_KEYS = new Set(['id', 'link'])
 

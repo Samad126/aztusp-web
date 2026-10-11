@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Chip, Stack, TableCell, TableRow, Typography } from '@mui/material'
-import DataTable, { type Column } from '../components/DataTable.tsx'
+import DataTable from '../components/table/DataTable.tsx'
+import type { Column } from '../components/table/tableRows.ts'
 import { Async, EmptyState, PageHeader } from '../components/PageState.tsx'
 import { endpoints } from '../api/endpoints.ts'
 import { useApi } from '../api/useApi.ts'
@@ -9,9 +10,7 @@ import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
 import { gradeTone, toNumber } from '../lib/format.ts'
 
-type T = TFunction
-
-const summaryColumns = (t: T): Column<SemesterSummary>[] => [
+const summaryColumns = (t: TFunction): Column<SemesterSummary>[] => [
   { key: 'semester', header: t('grades.semester'), sortValue: (row) => row.semester, noWrap: true },
   { key: 'total_courses', header: t('grades.courses'), align: 'right', sortValue: (row) => toNumber(row.total_courses) },
   { key: 'attended_courses', header: t('grades.attended'), align: 'right', sortValue: (row) => toNumber(row.attended_courses) },
@@ -26,7 +25,7 @@ const summaryColumns = (t: T): Column<SemesterSummary>[] => [
   },
 ]
 
-const resultColumns = (t: T): Column<CourseResult>[] => [
+const resultColumns = (t: TFunction): Column<CourseResult>[] => [
   { key: 'course', header: t('courses.course'), sortValue: (row) => row.course, render: (row) => <strong>{row.course}</strong> },
   {
     key: 'course_type',

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Button, ListItemText, Menu, MenuItem } from '@mui/material'
 import TranslateIcon from '@mui/icons-material/Translate'
 import { useTranslation } from 'react-i18next'
-import { languages } from '../i18n/messages.ts'
+import { languages } from '../i18n/languages.ts'
 
 /** Compact language menu for headers where the full settings control doesn't fit. */
 export default function LanguageSwitcher({ compact = false }: { compact?: boolean }) {

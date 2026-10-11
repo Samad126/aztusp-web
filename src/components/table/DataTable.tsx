@@ -1,7 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import {
   Box,
-  InputAdornment,
   Paper,
   Table,
   TableBody,
@@ -12,27 +11,16 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
-  TextField,
   Typography,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
 import { alpha } from '@mui/material/styles'
 import { useTranslation } from 'react-i18next'
+import DataTableToolbar from './DataTableToolbar.tsx'
+import { type Column, type SortState, visibleRows } from './tableRows.ts'
 
-export interface Column<T> {
-  key: string
-  header: ReactNode
-  /** Cell content. Defaults to `sortValue`. */
-  render?: (row: T) => ReactNode
-  /** Value used for sorting and search. Without it the column can't be sorted. */
-  sortValue?: (row: T) => string | number | null | undefined
-  align?: 'left' | 'right' | 'center'
-  width?: number | string
-  /** Keeps the column visible while scrolling horizontally. */
-  sticky?: boolean
-  noWrap?: boolean
-}
+// The pager is shown once a table has more rows than the smallest of these.
+const ROWS_PER_PAGE_OPTIONS = [10, 25, 50]
 
 interface DataTableProps<T> {
   columns: Column<T>[]
@@ -54,16 +42,8 @@ interface DataTableProps<T> {
   /** Summary row rendered under the body. */
   footer?: ReactNode
   emptyMessage?: string
-  defaultSort?: { key: string; direction: 'asc' | 'desc' }
+  defaultSort?: SortState
   minWidth?: number
-}
-
-function compare(a: string | number | null | undefined, b: string | number | null | undefined) {
-  const blankA = a === null || a === undefined || a === ''
-  const blankB = b === null || b === undefined || b === ''
-  if (blankA || blankB) return blankA === blankB ? 0 : blankA ? 1 : -1
-  if (typeof a === 'number' && typeof b === 'number') return a - b
-  return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' })
 }
 
 export default function DataTable<T>({
@@ -88,29 +68,14 @@ export default function DataTable<T>({
   const { t } = useTranslation()
   const searchLabel = searchPlaceholder ?? t('common.search')
   const [query, setQuery] = useState('')
-  const [sort, setSort] = useState(defaultSort ?? null)
+  const [sort, setSort] = useState<SortState | null>(defaultSort ?? null)
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(pageSize)
 
-  const visible = useMemo(() => {
-    const needle = query.trim().toLowerCase()
-    let result = rows
-    if (needle) {
-      result = rows.filter((row) => {
-        const text =
-          searchText?.(row) ??
-          columns.map((column) => column.sortValue?.(row) ?? '').join(' ')
-        return text.toLowerCase().includes(needle)
-      })
-    }
-    const column = columns.find((item) => item.key === sort?.key)
-    if (column?.sortValue && sort) {
-      const { sortValue } = column
-      const factor = sort.direction === 'asc' ? 1 : -1
-      result = [...result].sort((a, b) => compare(sortValue(a), sortValue(b)) * factor)
-    }
-    return result
-  }, [rows, query, sort, columns, searchText])
+  const visible = useMemo(
+    () => visibleRows(rows, { columns, query, sort, searchText }),
+    [rows, query, sort, columns, searchText],
+  )
 
   const lastPage = Math.max(0, Math.ceil(visible.length / rowsPerPage) - 1)
   const safePage = Math.min(page, lastPage)
@@ -129,57 +94,18 @@ export default function DataTable<T>({
   return (
     <Paper elevation={0} sx={{ border: 1, borderColor: 'divider', overflow: 'hidden' }}>
       {hasToolbar && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 2,
-            px: 2.5,
-            py: 2,
-            borderBottom: 1,
-            borderColor: 'divider',
+        <DataTableToolbar
+          title={title}
+          subtitle={subtitle}
+          actions={actions}
+          searchable={searchable}
+          searchLabel={searchLabel}
+          query={query}
+          onQueryChange={(value) => {
+            setQuery(value)
+            setPage(0)
           }}
-        >
-          <Box sx={{ minWidth: 0 }}>
-            {title && (
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                {title}
-              </Typography>
-            )}
-            {subtitle && (
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {subtitle}
-              </Typography>
-            )}
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-            {actions}
-            {searchable && (
-              <TextField
-                size="small"
-                placeholder={searchLabel}
-                value={query}
-                onChange={(event) => {
-                  setQuery(event.target.value)
-                  setPage(0)
-                }}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon fontSize="small" />
-                      </InputAdornment>
-                    ),
-                  },
-                  htmlInput: { 'aria-label': searchLabel },
-                }}
-                sx={{ width: { xs: '100%', sm: 240 } }}
-              />
-            )}
-          </Box>
-        </Box>
+        />
       )}
 
       <TableContainer sx={{ overflowX: 'auto' }}>
@@ -272,7 +198,7 @@ export default function DataTable<T>({
         </Box>
       )}
 
-      {paginate && visible.length > 10 && (
+      {paginate && visible.length > ROWS_PER_PAGE_OPTIONS[0] && (
         <TablePagination
           component="div"
           count={visible.length}
@@ -283,7 +209,7 @@ export default function DataTable<T>({
             setRowsPerPage(Number(event.target.value))
             setPage(0)
           }}
-          rowsPerPageOptions={[10, 25, 50]}
+          rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
           labelRowsPerPage={t('common.rowsPerPage')}
           sx={{ borderTop: 1, borderColor: 'divider' }}
         />

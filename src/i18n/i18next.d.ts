@@ -1,4 +1,4 @@
-import type { en } from './messages.ts'
+import type { en } from './locales/en.ts'
 
 declare module 'i18next' {
   interface CustomTypeOptions {

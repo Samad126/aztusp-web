@@ -8,7 +8,7 @@ import type {
   CourseScores,
   LecturePlan,
 } from '../api/types.ts'
-import { DEMO_STUDENT_ID } from './data.ts'
+import { DEMO_STUDENT_ID } from './student.ts'
 
 const SEMESTER = '2026-2027/1'
 const SESSION_COUNT = 12

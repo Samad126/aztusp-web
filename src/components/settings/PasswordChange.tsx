@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
-import { Alert, Box, Button, Paper, Stack, Typography } from '@mui/material'
+import { Alert, Box, Button, Stack, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { apiPost } from '../api/client.ts'
-import { endpoints } from '../api/endpoints.ts'
-import type { PasswordChangeResult } from '../api/types.ts'
-import PasswordField from './PasswordField.tsx'
+import { apiPost } from '../../api/client.ts'
+import { endpoints } from '../../api/endpoints.ts'
+import type { PasswordChangeResult } from '../../api/types.ts'
+import PasswordField from '../PasswordField.tsx'
+import SettingsSection from './SettingsSection.tsx'
 
 export default function PasswordChange() {
   const { t } = useTranslation()
@@ -43,13 +44,7 @@ export default function PasswordChange() {
   }
 
   return (
-    <Paper elevation={0} sx={{ maxWidth: 720, px: 3, py: 2.5, border: 1, borderColor: 'divider' }}>
-      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-        {t('password.changeTitle')}
-      </Typography>
-      <Typography variant="body2" sx={{ mt: 0.5, color: 'text.secondary' }}>
-        {t('password.changeDescription')}
-      </Typography>
+    <SettingsSection title={t('password.changeTitle')} description={t('password.changeDescription')}>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2.5 }}>
         <Stack spacing={2.5}>
           <PasswordField
@@ -87,6 +82,6 @@ export default function PasswordChange() {
           </Box>
         </Stack>
       </Box>
-    </Paper>
+    </SettingsSection>
   )
 }

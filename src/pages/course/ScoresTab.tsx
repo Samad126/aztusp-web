@@ -1,6 +1,6 @@
 import { Alert, Box, LinearProgress, Paper, Stack, Typography } from '@mui/material'
 import { Async } from '../../components/PageState.tsx'
-import RecordsTable from '../../components/RecordsTable.tsx'
+import RecordsTable from '../../components/table/RecordsTable.tsx'
 import { endpoints } from '../../api/endpoints.ts'
 import { useApi } from '../../api/useApi.ts'
 import type { CourseScores } from '../../api/types.ts'
