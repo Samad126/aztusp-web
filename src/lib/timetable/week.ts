@@ -6,21 +6,25 @@ export type Week = 'upper' | 'lower'
 /** What the week filter shows: the week today falls in, every week, or one week. */
 export type WeekFilter = 'current' | 'all' | Week
 
-// Baku is UTC+4 all year. The term starts on 15 September, and the weeks alternate from there, starting with üst.
+// Baku is UTC+4 all year. Weeks run Monday to Sunday and alternate, starting with üst in the week that holds 15 September.
 const BAKU_OFFSET_MS = 4 * 60 * 60 * 1000
 const DAY_MS = 24 * 60 * 60 * 1000
 
-/** The week a date falls in, counted in Baku time from 15 September: üst, then alt, then üst again. */
+/** The Monday of the week that holds 15 September, as a UTC timestamp: the first week of the term. */
+function termStart(year: number): number {
+  const september15 = Date.UTC(year, 8, 15)
+  const sinceMonday = (new Date(september15).getUTCDay() + 6) % 7 // Monday is 0, Sunday is 6
+  return september15 - sinceMonday * DAY_MS
+}
+
+/** The week a date falls in, counted in Baku time from the term's first week: üst, then alt, then üst again. */
 export function currentWeek(now: Date = new Date()): Week {
   const baku = new Date(now.getTime() + BAKU_OFFSET_MS)
   const year = baku.getUTCFullYear()
-  const month = baku.getUTCMonth()
-  const day = baku.getUTCDate()
-  // Before 15 September the term is still last year's.
-  const termYear = month < 8 || (month === 8 && day < 15) ? year - 1 : year
-  const termStart = Date.UTC(termYear, 8, 15)
-  const today = Date.UTC(year, month, day)
-  const weekNumber = Math.floor((today - termStart) / DAY_MS / 7)
+  const today = Date.UTC(year, baku.getUTCMonth(), baku.getUTCDate())
+  // Before this year's term starts, the weeks still belong to last year's term.
+  const start = today < termStart(year) ? termStart(year - 1) : termStart(year)
+  const weekNumber = Math.floor((today - start) / DAY_MS / 7)
   return weekNumber % 2 === 0 ? 'upper' : 'lower'
 }
 
