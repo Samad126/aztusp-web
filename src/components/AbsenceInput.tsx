@@ -8,28 +8,20 @@ interface AbsenceInputProps {
   error?: boolean
 }
 
-/** The lesson count for the absence simulator. Whole numbers only; the parent reads it with `parseLessons`. */
+/** The lesson count for the absence simulator. Digits only; the parent reads it with `parseLessons`. */
 export default function AbsenceInput({ value, onChange, helperText, error = false }: AbsenceInputProps) {
   const { t } = useTranslation()
+  // Keeps digits only, so letters, signs, decimal points and pasted text never reach the parent.
   return (
     <TextField
-      type="number"
       size="small"
       label={t('absence.label')}
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) => onChange(event.target.value.replace(/\D/g, ''))}
       helperText={helperText}
       error={error}
-      slotProps={{ htmlInput: { min: 0, step: 1, inputMode: 'numeric' } }}
-      sx={{
-        width: 220,
-        // Hides the spin arrows: WebKit and Blink use the first selector, Firefox the second.
-        '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
-          WebkitAppearance: 'none',
-          margin: 0,
-        },
-        '& input[type=number]': { MozAppearance: 'textfield', appearance: 'textfield' },
-      }}
+      slotProps={{ htmlInput: { inputMode: 'numeric' } }}
+      sx={{ width: 220 }}
     />
   )
 }
