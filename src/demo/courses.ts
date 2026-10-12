@@ -20,21 +20,8 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000
 
 const SESSION_NUMBERS = Array.from({ length: SESSION_COUNT }, (_, index) => String(index + 1))
 
-// Classmates in every journal. The first entry is the demo student.
-const STUDENTS: [id: string, name: string][] = [
-  [DEMO_STUDENT_ID, 'Ramin Hasanov'],
-  ['M2400118', 'Murad Aliyev'],
-  ['M2400104', 'Nigar Karimova'],
-  ['M2400131', 'Farid Guliyev'],
-  ['M2400097', 'Lamiya Ahmadova'],
-  ['M2400140', 'Orkhan Safarov'],
-  ['M2400112', 'Gunel Rustamova'],
-  ['M2400106', 'Elvin Jafarov'],
-  ['M2400128', 'Sevinj Mammadli'],
-  ['M2400101', 'Rashad Nasibov'],
-  ['M2400135', 'Konul Ibrahimova'],
-  ['M2400119', 'Ulvi Bayramov'],
-]
+// The journal holds only the student's own row, so the demo journal has only the demo student.
+const STUDENTS: [id: string, name: string][] = [[DEMO_STUDENT_ID, 'Ramin Hasanov']]
 
 const sessions: AttendanceSession[] = SESSION_NUMBERS.map((number, index) => {
   const date = index < HELD ? new Date(FIRST_SESSION_UTC + index * WEEK_MS).toISOString().slice(0, 10) : null

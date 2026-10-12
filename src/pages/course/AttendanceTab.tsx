@@ -25,15 +25,6 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
   const columns = useMemo<Column<AttendanceStudent>[]>(() => {
     if (!data) return []
     return [
-      {
-        key: 'name',
-        header: t('attendance.student'),
-        sticky: true,
-        noWrap: true,
-        sortValue: (row) => row.name,
-        render: (row) => <strong>{row.name}</strong>,
-      },
-      { key: 'student_id', header: t('attendance.id'), sortValue: (row) => row.student_id, noWrap: true },
       ...data.sessions.map<Column<AttendanceStudent>>((session, index) => ({
         key: `s${session.number}`,
         header: (
@@ -91,10 +82,8 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
               rows={data.students}
               getRowKey={(row) => row.student_id || row.number}
               isRowHighlighted={(row) => row.student_id === studentId}
-              searchable
-              searchPlaceholder={t('attendance.searchStudents')}
               pageSize={25}
-              minWidth={Math.max(720, 280 + data.sessions.length * 44)}
+              minWidth={Math.max(360, 200 + data.sessions.length * 44)}
               actions={
                 Object.keys(data.legend).length > 0 && (
                   <Stack direction="row" spacing={0.75} sx={{ flexWrap: 'wrap', rowGap: 0.75 }}>
