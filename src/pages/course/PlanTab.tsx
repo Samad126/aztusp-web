@@ -1,4 +1,4 @@
-import { Paper, Stack, Typography } from '@mui/material'
+import { Link, Paper, Stack, Typography } from '@mui/material'
 import KeyValueGrid from '../../components/KeyValueGrid.tsx'
 import { Async, EmptyState } from '../../components/PageState.tsx'
 import RecordsTable from '../../components/table/RecordsTable.tsx'
@@ -7,6 +7,19 @@ import { useApi } from '../../api/useApi.ts'
 import type { LecturePlan } from '../../api/types.ts'
 import { fieldLabel } from '../../i18n/index.ts'
 import { useTranslation } from 'react-i18next'
+
+/** Plan text with its web addresses turned into links. The split keeps each address at an odd index. */
+function linkify(text: string) {
+  return text.split(/(https?:\/\/[^\s]*[^\s.,;:!?)\]])/i).map((part, index) =>
+    index % 2 === 1 ? (
+      <Link key={index} href={part} target="_blank" rel="noreferrer" underline="hover">
+        {part}
+      </Link>
+    ) : (
+      part
+    ),
+  )
+}
 
 export default function PlanTab({ courseId }: { courseId: string }) {
   const { t } = useTranslation()
@@ -27,7 +40,7 @@ export default function PlanTab({ courseId }: { courseId: string }) {
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
                 {block.title}
               </Typography>
-              <Typography sx={{ whiteSpace: 'pre-wrap', color: 'text.secondary' }}>{block.text || '—'}</Typography>
+              <Typography sx={{ whiteSpace: 'pre-wrap', color: 'text.secondary' }}>{block.text ? linkify(block.text) : '—'}</Typography>
             </Paper>
           ),
         )}
