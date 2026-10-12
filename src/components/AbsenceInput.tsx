@@ -5,10 +5,11 @@ interface AbsenceInputProps {
   value: string
   onChange: (value: string) => void
   helperText?: string
+  error?: boolean
 }
 
 /** The lesson count for the absence simulator. Whole numbers only; the parent reads it with `parseLessons`. */
-export default function AbsenceInput({ value, onChange, helperText }: AbsenceInputProps) {
+export default function AbsenceInput({ value, onChange, helperText, error = false }: AbsenceInputProps) {
   const { t } = useTranslation()
   return (
     <TextField
@@ -18,6 +19,7 @@ export default function AbsenceInput({ value, onChange, helperText }: AbsenceInp
       value={value}
       onChange={(event) => onChange(event.target.value)}
       helperText={helperText}
+      error={error}
       slotProps={{ htmlInput: { min: 0, step: 1, inputMode: 'numeric' } }}
       sx={{
         width: 220,

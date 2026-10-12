@@ -203,6 +203,7 @@ export const en = {
   'absence.title': 'Simulate absence',
   'absence.description': 'See how your attendance would change if you miss the lessons you enter. Missed lessons count as held and absent.',
   'absence.remaining': 'Still to come in this course: {remaining}',
+  'absence.tooMany': 'Only {remaining} lessons are left in this course',
   'absence.column': 'Estimated',
 
   'notices.title': 'Notices',

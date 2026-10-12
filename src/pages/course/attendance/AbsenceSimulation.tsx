@@ -11,10 +11,13 @@ import { formatPercent, percentTone, toNumber } from '../../../lib/format.ts'
 export default function AbsenceSimulation({ attendance, student }: { attendance: CourseAttendance; student: AttendanceStudent }) {
   const { t, i18n } = useTranslation()
   const [absence, setAbsence] = useState('')
-  const lessons = parseLessons(absence)
   const counts = countMarks(student)
   const held = countHeld(attendance)
   const remaining = Math.max(0, attendance.sessions.length - held)
+  // Only lessons still to come can be missed, so the simulation stops at the number left in the course.
+  const typed = parseLessons(absence)
+  const tooMany = typed > remaining
+  const lessons = Math.min(typed, remaining)
   const before = toNumber(student.percent)
   const after = estimateRate(attendance, student, lessons)
 
@@ -37,7 +40,12 @@ export default function AbsenceSimulation({ attendance, student }: { attendance:
         {t('absence.description')}
       </Typography>
       <Box sx={{ display: 'grid', gap: 2, alignItems: 'start', gridTemplateColumns: { xs: '1fr', md: 'auto 1fr' } }}>
-        <AbsenceInput value={absence} onChange={setAbsence} helperText={t('absence.remaining', { remaining })} />
+        <AbsenceInput
+          value={absence}
+          onChange={setAbsence}
+          error={tooMany}
+          helperText={tooMany ? t('absence.tooMany', { remaining }) : t('absence.remaining', { remaining })}
+        />
         <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 150px), 1fr))' }}>
           {stats.map((stat) => (
             <MetricTile key={stat.label} label={stat.label} value={stat.value} tone={stat.tone} />

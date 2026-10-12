@@ -205,6 +205,7 @@ export const az: Record<MessageKey, string> = {
   'absence.title': 'Qayıbı simulyasiya et',
   'absence.description': 'Daxil etdiyiniz dərsləri buraxsanız davamiyyətinizin necə dəyişəcəyini görün. Buraxılan dərslər keçirilmiş və qayıb sayılır.',
   'absence.remaining': 'Bu kursda hələ qalan dərs: {remaining}',
+  'absence.tooMany': 'Bu kursda yalnız {remaining} dərs qalıb',
   'absence.column': 'Təxmini',
 
   'notices.title': 'Elanlar',
