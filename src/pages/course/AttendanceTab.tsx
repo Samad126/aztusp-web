@@ -64,20 +64,12 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
           <EmptyState title={t('attendance.noJournal')}>{t('attendance.noJournalHint')}</EmptyState>
         ) : (
           <Stack spacing={3}>
-            <AttendanceSummary attendance={data} student={mine} />
-
             {mine && <AbsenceSimulation attendance={data} student={mine} />}
-
-            {Object.keys(data.info).length > 0 && (
-              <KeyValueGrid
-                title={t('attendance.course')}
-                items={Object.entries(data.info).map(([key, value]) => ({ label: fieldLabel(key), value }))}
-              />
-            )}
 
             <DataTable
               title={t('attendance.journal')}
               subtitle={mine ? t('attendance.yourRow') : undefined}
+              summary={<AttendanceSummary attendance={data} student={mine} />}
               columns={columns}
               rows={data.students}
               getRowKey={(row) => row.student_id || row.number}
@@ -94,6 +86,13 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
                 )
               }
             />
+
+            {Object.keys(data.info).length > 0 && (
+              <KeyValueGrid
+                title={t('attendance.course')}
+                items={Object.entries(data.info).map(([key, value]) => ({ label: fieldLabel(key), value }))}
+              />
+            )}
           </Stack>
         ))}
     </Async>

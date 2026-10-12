@@ -1,46 +1,30 @@
-import { Box, LinearProgress } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import MetricTile from '../../../components/MetricTile.tsx'
 import type { AttendanceStudent, CourseAttendance } from '../../../api/types.ts'
 import { countMarks } from '../../../lib/attendance.ts'
-import { percentTone, toNumber } from '../../../lib/format.ts'
 
-/** The headline figures for the student in one course. The rate comes first, with its bar. */
+/** The student's presence figures for one course, shown above the attendance journal. */
 export default function AttendanceSummary({ attendance, student }: { attendance: CourseAttendance; student: AttendanceStudent | undefined }) {
   const { t } = useTranslation()
   const counts = countMarks(student)
-  const percent = toNumber(student?.percent ?? attendance.header.percent)
-  const tone = percentTone(percent)
 
   const stats = [
-    { label: t('attendance.rate'), value: student?.percent ?? attendance.header.percent ?? '—' },
-    { label: t('common.score'), value: student?.score ?? attendance.header.score ?? '—' },
     { label: t('attendance.present'), value: counts.present },
     { label: t('attendance.absent'), value: counts.absent },
     { label: t('attendance.held'), value: attendance.sessions.filter((session) => session.date).length },
-    { label: t('attendance.planned'), value: attendance.sessions.length },
   ]
 
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gap: 2,
-        // Fixed columns rather than auto-fill: a tile must be wide enough for "Keçirilən dərslər" on one line.
-        gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' },
-      }}
-    >
-      {stats.map((stat, index) => (
-        <MetricTile key={stat.label} label={stat.label} value={stat.value} tone={index === 0 ? tone : 'default'}>
-          {index === 0 && (
-            <LinearProgress
-              variant="determinate"
-              color={tone === 'default' ? 'primary' : tone}
-              value={Math.min(100, percent ?? 0)}
-              sx={{ mt: 1, height: 6, borderRadius: 3 }}
-            />
-          )}
-        </MetricTile>
+    <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+      {stats.map((stat) => (
+        <Box key={stat.label} sx={{ minWidth: 0 }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 0.6 }}>
+            {stat.label}
+          </Typography>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            {stat.value}
+          </Typography>
+        </Box>
       ))}
     </Box>
   )

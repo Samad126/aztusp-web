@@ -30,6 +30,8 @@ interface DataTableProps<T> {
   subtitle?: ReactNode
   /** Extra controls placed beside the search box. */
   actions?: ReactNode
+  /** Figures shown between the toolbar and the table. */
+  summary?: ReactNode
   searchable?: boolean
   searchPlaceholder?: string
   /** Text matched by the search box. Defaults to the sortable column values. */
@@ -53,6 +55,7 @@ export default function DataTable<T>({
   title,
   subtitle,
   actions,
+  summary,
   searchable = false,
   searchPlaceholder,
   searchText,
@@ -107,6 +110,8 @@ export default function DataTable<T>({
           }}
         />
       )}
+
+      {summary && <Box sx={{ px: 2.5, py: 1.75, borderBottom: 1, borderColor: 'divider' }}>{summary}</Box>}
 
       <TableContainer sx={{ overflowX: 'auto' }}>
         <Table size="small" sx={{ minWidth }} stickyHeader>
