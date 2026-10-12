@@ -10,7 +10,7 @@ import TimetableFrame from './TimetableFrame.tsx'
 
 /**
  * Time slots across the top, weekdays down the side. On a phone there is no room for the columns, so each weekday gets
- * a tab and its lessons are listed by time instead. From a tablet up, the grid scrolls sideways and the weekday column stays in view.
+ * a tab, and the weekdays swipe side to side with its lessons listed by time. From a tablet up, the grid scrolls sideways and the weekday column stays in view.
  */
 export default function TimetableGrid({
   grid: full,
