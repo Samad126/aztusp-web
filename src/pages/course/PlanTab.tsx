@@ -40,7 +40,9 @@ export default function PlanTab({ courseId }: { courseId: string }) {
               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
                 {block.title}
               </Typography>
-              <Typography sx={{ whiteSpace: 'pre-wrap', color: 'text.secondary' }}>{block.text ? linkify(block.text) : '—'}</Typography>
+              <Typography sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'text.secondary' }}>
+                {block.text ? linkify(block.text) : '—'}
+              </Typography>
             </Paper>
           ),
         )}
