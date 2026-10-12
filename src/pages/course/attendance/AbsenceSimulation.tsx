@@ -46,7 +46,7 @@ export default function AbsenceSimulation({ attendance, student }: { attendance:
           error={tooMany}
           helperText={tooMany ? t('absence.tooMany', { remaining }) : t('absence.remaining', { remaining })}
         />
-        <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 150px), 1fr))' }}>
+        <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 170px), 1fr))' }}>
           {stats.map((stat) => (
             <MetricTile key={stat.label} label={stat.label} value={stat.value} tone={stat.tone} />
           ))}

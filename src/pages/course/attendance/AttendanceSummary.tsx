@@ -26,7 +26,8 @@ export default function AttendanceSummary({ attendance, student }: { attendance:
       sx={{
         display: 'grid',
         gap: 2,
-        gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 150px), 1fr))',
+        // Fixed columns rather than auto-fill: a tile must be wide enough for "Keçirilən dərslər" on one line.
+        gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' },
       }}
     >
       {stats.map((stat, index) => (
