@@ -217,6 +217,9 @@ export type CourseTab = 'notices' | 'board' | 'materials' | 'tasks'
 export interface Subscription {
   email: string | null
   fields: string[]
+  absences: boolean
+  individual_work: boolean
+  course_scores: boolean
   telegram_linked: boolean
   status: 'ok' | 'wrong_password' | 'error'
   last_checked_at: string | null

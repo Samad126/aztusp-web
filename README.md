@@ -6,7 +6,7 @@ The sign-in page also has a Demo option. It opens the app on built-in sample dat
 
 ## Backend
 
-The data comes from the AZTUSP API, version 2.3.0, which this app is built against. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend), and its interactive docs are at [aztuapi.alakbaroff.com/docs](https://aztuapi.alakbaroff.com/docs).
+The data comes from the AZTUSP API, version 3.0.0, which this app is built against. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend), and its interactive docs are at [aztuapi.alakbaroff.com/docs](https://aztuapi.alakbaroff.com/docs).
 
 Signing out calls `POST /api/v1/auth/logout`, which also signs out of the university site, then clears the local session.
 

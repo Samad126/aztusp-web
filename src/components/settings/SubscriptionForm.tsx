@@ -17,11 +17,9 @@ import { useTranslation } from 'react-i18next'
 import { ApiError, apiDelete, apiPut } from '../../api/client.ts'
 import { endpoints } from '../../api/endpoints.ts'
 import type { Subscription } from '../../api/types.ts'
-import { fieldLabel } from '../../i18n/index.ts'
 
-// The same fields the grade watcher can watch, and its default (`WATCHABLE_FIELDS` in the backend).
-const WATCHABLE_FIELDS = ['course_type', 'credits', 'final_score', 'grade', 'retake']
-const DEFAULT_FIELDS = ['final_score', 'grade']
+// Final score and grade are watched as one (the backend keeps them together), so one checkbox sets both.
+const SCORE_PAIR = ['final_score', 'grade']
 
 export default function SubscriptionForm({
   current,
@@ -35,16 +33,28 @@ export default function SubscriptionForm({
   const { t, i18n } = useTranslation()
   // Filled in once, from the saved settings. No password is asked for: the one saved at sign-in is used.
   const [email, setEmail] = useState(current?.email ?? '')
-  const [fields, setFields] = useState<string[]>(current?.fields ?? DEFAULT_FIELDS)
+  const [scoreAndGrade, setScoreAndGrade] = useState(() =>
+    (current?.fields ?? SCORE_PAIR).some((name) => SCORE_PAIR.includes(name)),
+  )
+  const [absences, setAbsences] = useState(current?.absences ?? false)
+  const [individualWork, setIndividualWork] = useState(current?.individual_work ?? false)
+  const [courseScores, setCourseScores] = useState(current?.course_scores ?? false)
   const [busy, setBusy] = useState<'save' | 'off' | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
 
+  // Like the backend, something has to be watched. Any one of the four options is enough.
+  const watching = scoreAndGrade || absences || individualWork || courseScores
   const hasContact = email.trim() !== '' || telegramLinked
-  const canSave = busy === null && fields.length > 0 && hasContact
+  const canSave = busy === null && watching && hasContact
 
-  const toggleField = (name: string, checked: boolean) =>
-    setFields(WATCHABLE_FIELDS.filter((item) => (item === name ? checked : fields.includes(item))))
+  const option = (label: string, checked: boolean, onChange: (checked: boolean) => void) => (
+    <FormControlLabel
+      key={label}
+      label={label}
+      control={<Checkbox checked={checked} disabled={busy !== null} onChange={(_, value) => onChange(value)} />}
+    />
+  )
 
   const run = async (action: 'save' | 'off', request: () => Promise<unknown>, done: string) => {
     setBusy(action)
@@ -68,7 +78,18 @@ export default function SubscriptionForm({
     event.preventDefault()
     void run(
       'save',
-      () => apiPut(endpoints.notifications, { email: email.trim() || null, fields }, { keepSession: true }),
+      () =>
+        apiPut(
+          endpoints.notifications,
+          {
+            email: email.trim() || null,
+            fields: scoreAndGrade ? SCORE_PAIR : [],
+            absences,
+            individual_work: individualWork,
+            course_scores: courseScores,
+          },
+          { keepSession: true },
+        ),
       t('subscriptions.saved'),
     )
   }
@@ -100,24 +121,15 @@ export default function SubscriptionForm({
           disabled={busy !== null}
         />
 
-        <FormControl component="fieldset" error={fields.length === 0}>
+        <FormControl component="fieldset" error={!watching}>
           <FormLabel component="legend">{t('subscriptions.fields')}</FormLabel>
           <FormGroup row>
-            {WATCHABLE_FIELDS.map((name) => (
-              <FormControlLabel
-                key={name}
-                label={fieldLabel(name)}
-                control={
-                  <Checkbox
-                    checked={fields.includes(name)}
-                    disabled={busy !== null}
-                    onChange={(_, checked) => toggleField(name, checked)}
-                  />
-                }
-              />
-            ))}
+            {option(t('subscriptions.scoreAndGrade'), scoreAndGrade, setScoreAndGrade)}
+            {option(t('subscriptions.absences'), absences, setAbsences)}
+            {option(t('subscriptions.individualWork'), individualWork, setIndividualWork)}
+            {option(t('subscriptions.courseScores'), courseScores, setCourseScores)}
           </FormGroup>
-          {fields.length === 0 && <FormHelperText>{t('subscriptions.fieldsRequired')}</FormHelperText>}
+          {!watching && <FormHelperText>{t('subscriptions.fieldsRequired')}</FormHelperText>}
         </FormControl>
 
         {error && <Alert severity="error">{error}</Alert>}
