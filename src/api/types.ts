@@ -120,7 +120,7 @@ export interface NoticesPage extends Envelope {
   tables: { notices: NoticeRow[] }
 }
 
-export interface NoticeAttachment {
+export interface Attachment {
   name: string
   url: string
   file_no: string
@@ -134,7 +134,17 @@ export interface NoticeDetail {
   author: string
   created_at: string
   views: string
-  attachments: NoticeAttachment[]
+  attachments: Attachment[]
+  body: string
+}
+
+export interface MaterialDetail {
+  id: string
+  subject: string
+  author: string
+  date: string
+  views: string
+  attachments: Attachment[]
   body: string
 }
 

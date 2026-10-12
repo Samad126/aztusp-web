@@ -1,4 +1,4 @@
-import type { NoticeAttachment, NoticeDetail, NoticeRow, NoticesPage } from '../api/types.ts'
+import type { Attachment, NoticeDetail, NoticeRow, NoticesPage } from '../api/types.ts'
 
 // Sample data for demo mode. Every person, email and number here is made up.
 
@@ -58,7 +58,7 @@ export const noticeDetails: NoticeDetail[] = notices.map(({ row, body, files = [
   created_at: row.created_at,
   views: row.views,
   body,
-  attachments: files.map<NoticeAttachment>((name, index) => {
+  attachments: files.map<Attachment>((name, index) => {
     const fileNo = `${row.id}-${index + 1}`
     return { name, url: '', file_no: fileNo, download: `${ATTACHMENT_PATH}${fileNo}` }
   }),

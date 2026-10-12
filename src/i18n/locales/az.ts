@@ -217,6 +217,9 @@ export const az: Record<MessageKey, string> = {
   'notices.viewsCount': '{n} baxış',
   'notices.attachments': 'Qoşma fayllar',
   'notices.noText': 'Bu elanın mətni yoxdur.',
+  'materials.viewsCount': '{n} baxış',
+  'materials.attachments': 'Qoşma fayllar',
+  'materials.noText': 'Bu materialın mətni yoxdur.',
 
   'scores.total': 'Cəmi',
 

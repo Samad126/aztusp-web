@@ -4,10 +4,10 @@ import AttachFileIcon from '@mui/icons-material/AttachFile'
 import DownloadIcon from '@mui/icons-material/Download'
 import { useTranslation } from 'react-i18next'
 import { downloadFile } from '../api/client.ts'
-import type { NoticeAttachment } from '../api/types.ts'
+import type { Attachment } from '../api/types.ts'
 
-/** A notice's attached file. Clicking it downloads through the API, since the file needs the sign-in token. */
-export default function AttachmentButton({ attachment }: { attachment: NoticeAttachment }) {
+/** An attached file of a notice or material. Clicking it downloads through the API, since the file needs the sign-in token. */
+export default function AttachmentButton({ attachment }: { attachment: Attachment }) {
   const { t } = useTranslation()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)

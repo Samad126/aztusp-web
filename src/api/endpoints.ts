@@ -18,6 +18,7 @@ export const endpoints = {
   courses: `${V1}/courses`,
   coursePlan: (id: string) => `${V1}/courses/${encodeURIComponent(id)}/plan`,
   courseTab: (id: string, tab: CourseTab) => `${V1}/courses/${encodeURIComponent(id)}/${tab}`,
+  material: (id: string) => `${V1}/courses/materials/${encodeURIComponent(id)}`,
   courseScores: (id: string) => `${V1}/courses/${encodeURIComponent(id)}/scores`,
   courseAttendance: (id: string) => `${V1}/courses/${encodeURIComponent(id)}/attendance`,
 }

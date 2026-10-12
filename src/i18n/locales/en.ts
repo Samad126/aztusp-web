@@ -215,6 +215,9 @@ export const en = {
   'notices.viewsCount': '{n} views',
   'notices.attachments': 'Attachments',
   'notices.noText': 'This notice has no text.',
+  'materials.viewsCount': '{n} views',
+  'materials.attachments': 'Attachments',
+  'materials.noText': 'This material has no text.',
 
   'scores.total': 'Total',
 

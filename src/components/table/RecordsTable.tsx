@@ -17,6 +17,7 @@ export default function RecordsTable({
   searchable,
   hiddenKeys = HIDDEN_KEYS,
   minWidth,
+  onRowClick,
 }: {
   rows: Record<string, string>[]
   title?: string
@@ -25,6 +26,7 @@ export default function RecordsTable({
   searchable?: boolean
   hiddenKeys?: Set<string>
   minWidth?: number
+  onRowClick?: (row: Record<string, string>) => void
 }) {
   const { t } = useTranslation()
 
@@ -64,6 +66,7 @@ export default function RecordsTable({
       emptyMessage={emptyMessage ?? t('common.nothingListed')}
       searchable={searchable ?? rows.length > 8}
       minWidth={minWidth ?? Math.max(480, columns.length * 140)}
+      onRowClick={onRowClick}
     />
   )
 }
