@@ -33,7 +33,8 @@ export default function DashboardLayout() {
     if (mobileOpen) navigate(-1)
   }
 
-  if (!username) return <Navigate to="/login" replace />
+  // Keeps the page so sign-in can bring the visitor back to it (see LoginPage).
+  if (!username) return <Navigate to="/login" replace state={{ from: pathname + search + hash }} />
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>

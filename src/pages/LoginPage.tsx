@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Alert, Box, Button, CircularProgress, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import AuthLayout from '../layouts/AuthLayout.tsx'
 import PasswordField from '../components/PasswordField.tsx'
@@ -11,6 +11,7 @@ type Mode = 'live' | 'demo'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const { state } = useLocation()
   const { username: signedIn, login, startDemo } = useAuth()
   const { t } = useTranslation()
   const [mode, setMode] = useState<Mode>('live')
@@ -20,20 +21,24 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const demo = mode === 'demo'
 
-  if (signedIn) return <Navigate to="/" replace />
+  // A visitor sent here by DashboardLayout (for example after a 401) returns to the page they were on.
+  const from: unknown = state?.from
+  const returnTo = typeof from === 'string' && from.startsWith('/') && !from.startsWith('//') ? from : '/'
+
+  if (signedIn) return <Navigate to={returnTo} replace />
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (demo) {
       startDemo()
-      navigate('/', { replace: true })
+      navigate(returnTo, { replace: true })
       return
     }
     setSubmitting(true)
     setError(null)
     try {
       await login(username.trim(), password)
-      navigate('/', { replace: true })
+      navigate(returnTo, { replace: true })
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : t('error.signIn'))
       setSubmitting(false)
