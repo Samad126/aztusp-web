@@ -46,11 +46,6 @@ export function gradeTone(grade: string): Tone {
   return 'default'
 }
 
-/** A percentage with at most one decimal, written the way the reader's language writes numbers. */
-export function formatPercent(value: number, locale: string) {
-  return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(value)}%`
-}
-
 /** Colour for a percentage where higher is better. */
 export function percentTone(value: number | null): Tone {
   if (value === null) return 'default'

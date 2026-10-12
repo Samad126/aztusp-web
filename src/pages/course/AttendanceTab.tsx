@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Chip, Stack, Tooltip } from '@mui/material'
 import KeyValueGrid from '../../components/KeyValueGrid.tsx'
 import { Async, EmptyState } from '../../components/PageState.tsx'
@@ -10,7 +10,7 @@ import type { AttendanceStudent, CourseAttendance, ProfilePage } from '../../api
 import { fieldLabel } from '../../i18n/index.ts'
 import { useTranslation } from 'react-i18next'
 import { percentTone, toNumber } from '../../lib/format.ts'
-import { findMyRow } from '../../lib/attendance.ts'
+import { countHeld, findMyRow, parseLessons } from '../../lib/attendance.ts'
 import AbsenceSimulation from './attendance/AbsenceSimulation.tsx'
 import AttendanceSummary from './attendance/AttendanceSummary.tsx'
 import MarkCell from './attendance/MarkCell.tsx'
@@ -21,6 +21,10 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
   const profile = useApi<ProfilePage>(endpoints.profile)
   const studentId = profile.data?.pairs.info.student_id
   const data = attendance.data
+  const [absence, setAbsence] = useState('')
+  // Only lessons still to come can be missed, so the simulation stops at the number left in the course.
+  const remaining = data ? Math.max(0, data.sessions.length - countHeld(data)) : 0
+  const lessons = Math.min(parseLessons(absence), remaining)
 
   const columns = useMemo<Column<AttendanceStudent>[]>(() => {
     if (!data) return []
@@ -64,12 +68,12 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
           <EmptyState title={t('attendance.noJournal')}>{t('attendance.noJournalHint')}</EmptyState>
         ) : (
           <Stack spacing={3}>
-            {mine && <AbsenceSimulation attendance={data} student={mine} />}
+            <AbsenceSimulation value={absence} onChange={setAbsence} remaining={remaining} />
 
             <DataTable
               title={t('attendance.journal')}
               subtitle={mine ? t('attendance.yourRow') : undefined}
-              summary={<AttendanceSummary attendance={data} student={mine} />}
+              summary={<AttendanceSummary attendance={data} student={mine} lessons={lessons} />}
               columns={columns}
               rows={data.students}
               getRowKey={(row) => row.student_id || row.number}

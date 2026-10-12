@@ -20,16 +20,24 @@ export function countHeld(attendance: CourseAttendance) {
 }
 
 /**
- * Attendance percent if `skipped` more classes are held and the student misses all of them.
- * Scales the portal's own percent by the classes held, so the estimate starts from the figure the page shows.
- * Marks are not used: a student's marks can be missing or not entered while the percent is still shown.
- * Returns null when the percent is missing or no class has been held yet, since there is nothing to scale.
+ * Most absences (qayıb) a student may have in a course: 25% of its total class hours, where one absence counts as
+ * two academic hours, rounded down. One more absence is past the limit and leaves the student in debt for the course
+ * or barred from its exam. Null when the course has no total hours.
  */
-export function estimateRate(attendance: CourseAttendance, student: AttendanceStudent | undefined, skipped: number): number | null {
-  const percent = toNumber(student?.percent)
-  const held = countHeld(attendance)
-  if (percent === null || held <= 0) return null
-  return (percent * held) / (held + skipped)
+export function absenceLimit(totalHours: string | undefined): number | null {
+  const hours = toNumber(totalHours)
+  return hours === null ? null : Math.floor((hours * 0.25) / 2)
+}
+
+/**
+ * Where a student stands against the absence limit: below it (All good), exactly at it so the maximum is reached
+ * (In limit), or past it (Fail).
+ */
+export type AbsenceStatus = 'allGood' | 'inLimit' | 'fail'
+
+export function absenceStatus(absences: number, limit: number): AbsenceStatus {
+  if (absences > limit) return 'fail'
+  return absences === limit ? 'inLimit' : 'allGood'
 }
 
 /** The lesson count typed into the simulator. Whole numbers from 0 up; anything else counts as 0. */
