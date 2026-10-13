@@ -241,6 +241,13 @@ export const az: Record<MessageKey, string> = {
   'settings.darkHint': 'Qaranlıq və işıqlı tema arasında keçid edin.',
   'settings.language': 'Dil',
   'settings.languageHint': 'İnterfeys dilini seçin. Universitet portalından gələn məzmun olduğu kimi göstərilir.',
+  'settings.install': 'Tətbiqi quraşdır',
+  'settings.installHint': 'AzTU-nu ana ekranınıza və ya kompüterinizə əlavə edin və tətbiq kimi açın.',
+  'settings.installButton': 'Quraşdır',
+  'settings.installIosTitle': 'Ana ekrana əlavə et',
+  'settings.installIosStep1': 'Bu səhifəni Safari-də açın.',
+  'settings.installIosStep2': 'Paylaş düyməsinə toxunun.',
+  'settings.installIosStep3': '«Ana ekrana əlavə et» seçin, sonra «Əlavə et» düyməsinə toxunun.',
 
   'subscriptions.title': 'Abunəliklər',
   'subscriptions.description': 'İzlədiyiniz şey dəyişəndə Telegram, e-poçt və ya hər ikisi ilə mesaj alın. Nəticələr 30 dəqiqədən bir yoxlanılır.',

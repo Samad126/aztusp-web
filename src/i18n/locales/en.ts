@@ -239,6 +239,13 @@ export const en = {
   'settings.darkHint': 'Switch between the dark and light theme.',
   'settings.language': 'Language',
   'settings.languageHint': 'Choose the language of the interface. Content from the university portal is shown as published.',
+  'settings.install': 'Install app',
+  'settings.installHint': 'Add AZTU to your home screen or desktop and open it like an app.',
+  'settings.installButton': 'Install',
+  'settings.installIosTitle': 'Add to Home Screen',
+  'settings.installIosStep1': 'Open this page in Safari.',
+  'settings.installIosStep2': 'Tap the Share button.',
+  'settings.installIosStep3': 'Choose Add to Home Screen, then tap Add.',
 
   'subscriptions.title': 'Subscriptions',
   'subscriptions.description': 'Get a message when something you watch changes, by Telegram, email or both. Results are checked every 30 minutes.',

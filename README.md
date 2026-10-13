@@ -4,6 +4,8 @@ A React + MUI dashboard for students. They sign in with their university account
 
 The sign-in page also has a Demo option. It opens the app on built-in sample data without a login. Demo mode never sends a request to the API, and its changes (password, notifications, photo, Telegram) are refused, so it cannot touch a real account.
 
+The app is also an installable web app (PWA). The Settings page has an Install button that adds it to the home screen or desktop (on iPhone and iPad it shows the Safari steps instead). The service worker keeps the app's own files on the device, so the app still opens without a connection; the data itself still needs one. The service worker never stores API responses or profile photos.
+
 ## Backend
 
 The data comes from the AZTUSP API, version 3.0.0, which this app is built against. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend), and its interactive docs are at [aztuapi.alakbaroff.com/docs](https://aztuapi.alakbaroff.com/docs).
@@ -42,6 +44,7 @@ bun install
 - `src/theme/` - light and dark palettes and the color-mode provider
 - `src/lib/` - formatting, attendance helpers and `storage.ts` (localStorage with blocked-storage guards); `timetable/` shapes lessons (`model.ts`) and works out the weeks (`week.ts`)
 - `src/navigation.ts` - sidebar items (label, route, icon)
+- `src/pwa/` - service worker registration (`serviceWorker.ts`) and the install prompt the Settings button uses (`installPrompt.ts`). The worker itself is `public/sw.js`, and the app manifest is `public/manifest.json`
 
 ## Docker
 

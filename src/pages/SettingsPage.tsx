@@ -1,6 +1,7 @@
 import { Box, Button, CircularProgress, Divider, Paper, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ThemeToggle from '../components/ThemeToggle.tsx'
+import InstallAppRow from '../components/settings/InstallAppRow.tsx'
 import PasswordChange from '../components/settings/PasswordChange.tsx'
 import ProfilePhoto from '../components/settings/ProfilePhoto.tsx'
 import SettingRow from '../components/settings/SettingRow.tsx'
@@ -66,6 +67,7 @@ export default function SettingsPage() {
             </ToggleButtonGroup>
           }
         />
+        <InstallAppRow />
       </Paper>
       <ProfilePhoto />
       <PasswordChange />
