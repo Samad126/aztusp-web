@@ -263,7 +263,7 @@ export const az: Record<MessageKey, string> = {
   'subscriptions.emailRequired': 'Telegram qoşulmayıbsa, lazımdır.',
   'subscriptions.fields': 'İzlənilənlər',
   'subscriptions.scoreAndGrade': 'Yekun bal və dərəcə',
-  'subscriptions.absences': 'Davamiyyət jurnalındakı qayıblar',
+  'subscriptions.attendance': 'Davamiyyət jurnalındakı qeydlər: qayıb və ya iştirak',
   'subscriptions.individualWork': 'Sərbəst işlər',
   'subscriptions.courseScores': 'Hər fənnin bal dəyişiklikləri (sərbəst iş, Məşğələ, Davamiyyət, Toplam)',
   'subscriptions.fieldsRequired': 'Ən azı bir şey seçin.',

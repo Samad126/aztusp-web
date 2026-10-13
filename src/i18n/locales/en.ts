@@ -261,7 +261,7 @@ export const en = {
   'subscriptions.emailRequired': 'Needed unless Telegram is connected.',
   'subscriptions.fields': 'What to watch',
   'subscriptions.scoreAndGrade': 'Final score and grade',
-  'subscriptions.absences': 'Absence marks in the attendance journal',
+  'subscriptions.attendance': 'Attendance marks in the attendance journal (absent or present)',
   'subscriptions.individualWork': 'Individual Works',
   'subscriptions.courseScores': 'Score changes in each course (independent work, seminar, attendance, total)',
   'subscriptions.fieldsRequired': 'Pick at least one thing to watch.',

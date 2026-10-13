@@ -36,7 +36,7 @@ export default function SubscriptionForm({
   const [scoreAndGrade, setScoreAndGrade] = useState(() =>
     (current?.fields ?? SCORE_PAIR).some((name) => SCORE_PAIR.includes(name)),
   )
-  const [absences, setAbsences] = useState(current?.absences ?? false)
+  const [attendance, setAttendance] = useState(current?.attendance ?? current?.absences ?? false)
   const [individualWork, setIndividualWork] = useState(current?.individual_work ?? false)
   const [courseScores, setCourseScores] = useState(current?.course_scores ?? false)
   const [busy, setBusy] = useState<'save' | 'off' | null>(null)
@@ -44,7 +44,7 @@ export default function SubscriptionForm({
   const [notice, setNotice] = useState<string | null>(null)
 
   // Like the backend, something has to be watched. Any one of the four options is enough.
-  const watching = scoreAndGrade || absences || individualWork || courseScores
+  const watching = scoreAndGrade || attendance || individualWork || courseScores
   const hasContact = email.trim() !== '' || telegramLinked
   const canSave = busy === null && watching && hasContact
 
@@ -84,7 +84,10 @@ export default function SubscriptionForm({
           {
             email: email.trim() || null,
             fields: scoreAndGrade ? SCORE_PAIR : [],
-            absences,
+            attendance,
+            // Servers from before the rename read only `absences` and drop an unknown `attendance`, which would switch
+            // this watch off. Both names carry the same value; a server with the rename takes `attendance` when both come.
+            absences: attendance,
             individual_work: individualWork,
             course_scores: courseScores,
           },
@@ -125,7 +128,7 @@ export default function SubscriptionForm({
           <FormLabel component="legend">{t('subscriptions.fields')}</FormLabel>
           <FormGroup row>
             {option(t('subscriptions.scoreAndGrade'), scoreAndGrade, setScoreAndGrade)}
-            {option(t('subscriptions.absences'), absences, setAbsences)}
+            {option(t('subscriptions.attendance'), attendance, setAttendance)}
             {option(t('subscriptions.individualWork'), individualWork, setIndividualWork)}
             {option(t('subscriptions.courseScores'), courseScores, setCourseScores)}
           </FormGroup>

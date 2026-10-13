@@ -227,7 +227,9 @@ export type CourseTab = 'notices' | 'board' | 'materials' | 'tasks'
 export interface Subscription {
   email: string | null
   fields: string[]
-  absences: boolean
+  // Attendance marks. Servers from before the rename send them as `absences`, so the form reads either name.
+  attendance?: boolean
+  absences?: boolean
   individual_work: boolean
   course_scores: boolean
   telegram_linked: boolean
