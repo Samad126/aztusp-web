@@ -44,6 +44,7 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
           />
         ),
       })),
+      { key: 'score', header: t('common.score'), align: 'right', sortValue: (row) => toNumber(row.score), render: (row) => row.score ?? '—' },
       {
         key: 'percent',
         header: t('attendance.rate'),

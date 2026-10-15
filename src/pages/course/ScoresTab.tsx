@@ -11,8 +11,6 @@ export default function ScoresTab({ courseId }: { courseId: string }) {
   const { t } = useTranslation()
   const scores = useApi<CourseScores>(endpoints.courseScores(courseId))
   const data = scores.data
-  // The total's maximum is the sum of the component maxima, so the in-term total shows out of 50.
-  const maxTotal = data?.components.reduce((sum, component) => sum + (toNumber(component.max) ?? 0), 0) ?? 0
 
   return (
     <Async loading={scores.loading} error={scores.error} onRetry={scores.reload} rows={5}>
@@ -34,12 +32,6 @@ export default function ScoresTab({ courseId }: { courseId: string }) {
               </Typography>
               <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
                 {data.total || '—'}
-                {maxTotal > 0 && (
-                  <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>
-                    {' '}
-                    / {maxTotal}
-                  </Typography>
-                )}
               </Typography>
             </Paper>
 

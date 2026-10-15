@@ -42,8 +42,7 @@ function journal(courseIndex: number): AttendanceStudent[] {
       student_id: studentId,
       name,
       marks,
-      // Attendance gives no points, so the journal's score is always 0.
-      score: '0',
+      score: String(present * 2),
       percent: String(Math.round((present / HELD) * 100)),
     }
   })
@@ -86,10 +85,7 @@ function makeCourse(spec: CourseSpec, index: number): DemoCourse {
           title: 'Weekly topics',
           rows: spec.topics.map((topic, week) => ({ week: String(week + 1), topic, hours: '6' })),
         },
-        {
-          title: 'Assessment',
-          text: 'In-term points (50): assessment 1 (10), assessment 2 (10), colloquium (20) and independent work (10). The final exam is 50 points, so the course total is 100.',
-        },
+        { title: 'Assessment', text: 'Points come from the midterm, the activity grade and the final exam.' },
       ],
     },
     items: {
@@ -130,15 +126,13 @@ const specs: CourseSpec[] = [
     teacher: 'Dr. Nigar Ismayilova',
     topics: ['Introduction to databases', 'The relational model', 'Relational algebra', 'SQL: queries and joins', 'Normalization', 'Transactions and concurrency', 'Indexes and query plans', 'NoSQL overview'],
     graded: [
-      { name: 'Assessment 1', max: 10, score: 9 },
-      { name: 'Assessment 2', max: 10, score: 8 },
-      { name: 'Colloquium', max: 20, score: 17 },
-      { name: 'Independent work', max: 10, score: 9 },
+      { name: 'Midterm', max: 30, score: 24 },
+      { name: 'Activity', max: 20, score: 17 },
     ],
     notes: ['The final exam (50 points) is not graded yet.'],
     notices: [
       { title: 'Lab 2 moved to Thursday', author: 'Dr. Nigar Ismayilova', date: '2026-10-07' },
-      { title: 'Colloquium covers weeks 1 to 7', author: 'Dr. Nigar Ismayilova', date: '2026-09-22' },
+      { title: 'Midterm covers weeks 1 to 7', author: 'Dr. Nigar Ismayilova', date: '2026-09-22' },
     ],
     board: [{ title: 'Which normal form does the project need?', author: 'Murad Aliyev', date: '2026-10-03', replies: '4' }],
     materials: [
@@ -147,7 +141,7 @@ const specs: CourseSpec[] = [
     ],
     tasks: [
       { title: 'Lab 1: ER diagram', task_type: 'Lab', start_date: '2026-09-15', end_date: '2026-09-29', evaluation: '10' },
-      { title: 'Project proposal', task_type: 'Project', start_date: '2026-10-06', end_date: '2026-10-27', evaluation: '10' },
+      { title: 'Project proposal', task_type: 'Project', start_date: '2026-10-06', end_date: '2026-10-27', evaluation: '20' },
     ],
   },
   {
@@ -156,10 +150,8 @@ const specs: CourseSpec[] = [
     teacher: 'Prof. Rashad Aliyev',
     topics: ['Processes and threads', 'CPU scheduling', 'Synchronization', 'Deadlocks', 'Memory management', 'Virtual memory', 'File systems', 'I/O and devices'],
     graded: [
-      { name: 'Assessment 1', max: 10, score: 8 },
-      { name: 'Assessment 2', max: 10, score: 9 },
-      { name: 'Colloquium', max: 20, score: 16 },
-      { name: 'Independent work', max: 10, score: 8 },
+      { name: 'Midterm', max: 30, score: 21 },
+      { name: 'Activity', max: 20, score: 19 },
     ],
     notes: ['The final exam (50 points) is not graded yet.'],
     notices: [{ title: 'Tuesday lecture moved to room 2-09', author: 'Prof. Rashad Aliyev', date: '2026-10-06' }],
@@ -182,16 +174,14 @@ const specs: CourseSpec[] = [
     teacher: 'Dr. Kamran Huseynov',
     topics: ['Network models: OSI and TCP/IP', 'Physical and data link layers', 'IP addressing', 'Routing', 'TCP and UDP', 'HTTP and DNS', 'Network security basics', 'Wireless networks'],
     graded: [
-      { name: 'Assessment 1', max: 10, score: 9 },
-      { name: 'Assessment 2', max: 10, score: 10 },
-      { name: 'Colloquium', max: 20, score: 18 },
-      { name: 'Independent work', max: 10, score: 9 },
+      { name: 'Midterm', max: 30, score: 26 },
+      { name: 'Activity', max: 20, score: 18 },
     ],
     notes: ['Scores are provisional until the department confirms them.'],
     notices: [{ title: 'Lab 1 is cancelled this week', author: 'Dr. Kamran Huseynov', date: '2026-10-05' }],
     board: [],
     materials: [{ title: 'Subnetting worksheet', author: 'Dr. Kamran Huseynov', date: '2026-09-18' }],
-    tasks: [{ title: 'Packet capture report', task_type: 'Report', start_date: '2026-10-01', end_date: '2026-10-22', evaluation: '10' }],
+    tasks: [{ title: 'Packet capture report', task_type: 'Report', start_date: '2026-10-01', end_date: '2026-10-22', evaluation: '15' }],
   },
   {
     id: '2004',
@@ -199,10 +189,8 @@ const specs: CourseSpec[] = [
     teacher: 'Dr. Tural Rzayev',
     topics: ['Basic probability', 'Conditional probability and Bayes', 'Random variables', 'Common distributions', 'Expectation and variance', 'Sampling distributions', 'Estimation', 'Hypothesis testing'],
     graded: [
-      { name: 'Assessment 1', max: 10, score: 6 },
-      { name: 'Assessment 2', max: 10, score: 7 },
-      { name: 'Colloquium', max: 20, score: 12 },
-      { name: 'Independent work', max: 10, score: 6 },
+      { name: 'Midterm', max: 30, score: 15 },
+      { name: 'Activity', max: 20, score: 14 },
     ],
     notes: ['The final exam (50 points) is not graded yet.'],
     notices: [],
@@ -216,10 +204,8 @@ const specs: CourseSpec[] = [
     teacher: 'Dr. Leyla Mammadova',
     topics: ['Process models', 'Requirements and user stories', 'Use cases', 'System design', 'Testing strategies', 'Version control and CI', 'Project planning', 'Maintenance and refactoring'],
     graded: [
-      { name: 'Assessment 1', max: 10, score: 10 },
-      { name: 'Assessment 2', max: 10, score: 9 },
-      { name: 'Colloquium', max: 20, score: 19 },
-      { name: 'Independent work', max: 10, score: 10 },
+      { name: 'Midterm', max: 30, score: 28 },
+      { name: 'Activity', max: 20, score: 20 },
     ],
     notes: ['Scores are provisional until the department confirms them.'],
     notices: [{ title: 'Team formation for the course project', author: 'Dr. Leyla Mammadova', date: '2026-09-14' }],
