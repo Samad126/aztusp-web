@@ -59,13 +59,6 @@ export function attendanceColumns(t: TFunction, studentId: string | undefined, l
       render: (row) => absenceLimit(row.attendance?.info.total_hours) ?? '—',
     },
     {
-      key: 'score',
-      header: t('common.score'),
-      align: 'right',
-      sortValue: (row) => toNumber(mineOf(row, studentId)?.score),
-      render: (row) => mineOf(row, studentId)?.score || '—',
-    },
-    {
       key: 'status',
       header: t('attendance.status'),
       align: 'right',
