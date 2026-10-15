@@ -8,7 +8,7 @@ The app is also an installable web app (PWA). The Settings page has an Install b
 
 ## Backend
 
-The data comes from the AZTUSP API, version 3.0.0, which this app is built against. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend), and its interactive docs are at [aztuapi.alakbaroff.com/docs](https://aztuapi.alakbaroff.com/docs).
+The data comes from the AZTUSP API, version 4.0.1, which this app is built against. Its source code is at [github.com/Samad126/aztusp-backend](https://github.com/Samad126/aztusp-backend), and its interactive docs are at [aztuapi.alakbaroff.com/docs](https://aztuapi.alakbaroff.com/docs).
 
 Signing out calls `POST /api/v1/auth/logout`, which also signs out of the university site, then clears the local session.
 
@@ -70,7 +70,7 @@ Required Actions secrets: `SSH_HOST`, `SSH_USER`, `SSH_PASSWORD`.
 
 ## Versioning
 
-The version is in `package.json`, and the sidebar footer shows it. The current version is 0.17.1. Bump it with each release: minor for a new feature, patch for a fix or a copy change.
+The version is in `package.json`, and the sidebar footer shows it. The current version is 0.18.0. Bump it with each release: minor for a new feature, patch for a fix or a copy change.
 
 ## License
 
