@@ -7,6 +7,7 @@ import type {
   CourseItems,
   CourseScores,
   LecturePlan,
+  TaskDetail,
 } from '../api/types.ts'
 import { DEMO_STUDENT_ID } from './student.ts'
 
@@ -65,6 +66,7 @@ export interface DemoCourse {
   course: Course
   plan: LecturePlan
   items: Record<'notices' | 'board' | 'materials' | 'tasks', CourseItems>
+  taskDetails: TaskDetail[]
   scores: CourseScores
   attendance: CourseAttendance
 }
@@ -73,7 +75,25 @@ function makeCourse(spec: CourseSpec, index: number): DemoCourse {
   const params = { lec_open_idx: spec.id, sem_code: SEMESTER }
   const wrap = (rows: Record<string, string>[]): CourseItems => ({ params, course: spec.name, items: rows })
 
+  const tasks: Record<string, string>[] = spec.tasks.map((task, number) => ({ id: `${spec.id}${number + 1}`, ...task }))
+  const taskDetails: TaskDetail[] = tasks.map((task) => ({
+    id: task.id,
+    subject: task.title,
+    task_type: task.task_type,
+    start_date: task.start_date,
+    end_date: task.end_date,
+    submission_method: 'Upload',
+    score: null,
+    max_score: task.evaluation,
+    evaluation: 'Yes',
+    body: `Hand in ${task.title.toLowerCase()} before the end date.`,
+    links: [],
+    attachments: [],
+    can_submit: true,
+  }))
+
   return {
+    taskDetails,
     course: { lec_open_idx: spec.id, sem_code: SEMESTER, name: spec.name, path: '' },
     plan: {
       params,
@@ -92,7 +112,7 @@ function makeCourse(spec: CourseSpec, index: number): DemoCourse {
       notices: wrap(spec.notices),
       board: wrap(spec.board),
       materials: wrap(spec.materials),
-      tasks: wrap(spec.tasks),
+      tasks: wrap(tasks),
     },
     scores: {
       params,

@@ -22,6 +22,7 @@ for (const demo of demoCourses) {
   const id = demo.course.lec_open_idx
   responses.set(endpoints.coursePlan(id), demo.plan)
   for (const tab of COURSE_TABS) responses.set(endpoints.courseTab(id, tab), demo.items[tab])
+  for (const task of demo.taskDetails) responses.set(endpoints.task(id, task.id), task)
   responses.set(endpoints.courseScores(id), demo.scores)
   responses.set(endpoints.courseAttendance(id), demo.attendance)
 }

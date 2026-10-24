@@ -138,6 +138,22 @@ export interface NoticeDetail {
   body: string
 }
 
+export interface TaskDetail {
+  id: string
+  subject: string
+  task_type: string
+  start_date: string
+  end_date: string
+  submission_method: string
+  score: string | null
+  max_score: string | null
+  evaluation: string
+  body: string
+  links: string[]
+  attachments: Attachment[]
+  can_submit: boolean
+}
+
 export interface MaterialDetail {
   id: string
   subject: string

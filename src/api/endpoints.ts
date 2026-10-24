@@ -19,6 +19,10 @@ export const endpoints = {
   coursePlan: (id: string) => `${V1}/courses/${encodeURIComponent(id)}/plan`,
   courseTab: (id: string, tab: CourseTab) => `${V1}/courses/${encodeURIComponent(id)}/${tab}`,
   material: (id: string) => `${V1}/courses/materials/${encodeURIComponent(id)}`,
+  task: (courseId: string, taskId: string) =>
+    `${V1}/courses/${encodeURIComponent(courseId)}/tasks/${encodeURIComponent(taskId)}`,
+  taskSubmission: (courseId: string, taskId: string) =>
+    `${V1}/courses/${encodeURIComponent(courseId)}/tasks/${encodeURIComponent(taskId)}/submission`,
   courseScores: (id: string) => `${V1}/courses/${encodeURIComponent(id)}/scores`,
   courseAttendance: (id: string) => `${V1}/courses/${encodeURIComponent(id)}/attendance`,
 }

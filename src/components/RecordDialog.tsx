@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Alert, Box, Dialog, DialogContent, DialogTitle, IconButton, Skeleton, Stack, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useTranslation } from 'react-i18next'
@@ -23,6 +24,8 @@ export default function RecordDialog({
   onRetry,
   attachmentsLabel,
   noTextLabel,
+  before,
+  after,
 }: {
   open: boolean
   onClose: () => void
@@ -32,6 +35,10 @@ export default function RecordDialog({
   onRetry: () => void
   attachmentsLabel: string
   noTextLabel: string
+  /** Shown above the files. */
+  before?: ReactNode
+  /** Shown below the text. */
+  after?: ReactNode
 }) {
   const { t } = useTranslation()
 
@@ -68,6 +75,7 @@ export default function RecordDialog({
         {error && <ErrorState error={error} onRetry={onRetry} />}
         {record && (
           <Stack spacing={3}>
+            {before}
             {record.attachments.length > 0 && (
               <Stack spacing={1}>
                 <Typography variant="overline" sx={{ color: 'text.secondary' }}>
@@ -83,6 +91,7 @@ export default function RecordDialog({
             ) : (
               <Alert severity="info">{noTextLabel}</Alert>
             )}
+            {after}
           </Stack>
         )}
       </DialogContent>

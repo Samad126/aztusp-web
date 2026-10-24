@@ -73,6 +73,11 @@ export function apiPost<T>(path: string, body?: unknown): Promise<T> {
   return sendJson<T>('POST', path, body)
 }
 
+/** Posts files as multipart form data. The browser sets the boundary, so no Content-Type is given. */
+export async function apiPostForm<T>(path: string, form: FormData): Promise<T> {
+  return (await send(path, { method: 'POST', body: form })).json()
+}
+
 export function apiPut<T>(path: string, body: unknown, options?: SendOptions): Promise<T> {
   return sendJson<T>('PUT', path, body, options)
 }
