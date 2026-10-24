@@ -53,3 +53,13 @@ export function percentTone(value: number | null): Tone {
   if (value >= 50) return 'warning'
   return 'error'
 }
+
+/** `20261026` or `2026-10-26` -> `26 October 2026`, in the given language. Anything else is returned as it came. */
+export function formatDate(value: string | null | undefined, language: string) {
+  const match = /^(\d{4})-?(\d{2})-?(\d{2})$/.exec((value ?? '').trim())
+  if (!match) return value ?? ''
+  const [, year, month, day] = match.map(Number)
+  const date = new Date(Date.UTC(year, month - 1, day))
+  if (date.getUTCMonth() !== month - 1) return value ?? ''
+  return new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : language, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date)
+}

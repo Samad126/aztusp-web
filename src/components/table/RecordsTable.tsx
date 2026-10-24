@@ -2,11 +2,12 @@ import { useMemo } from 'react'
 import { Link } from '@mui/material'
 import { fieldLabel } from '../../i18n/index.ts'
 import { useTranslation } from 'react-i18next'
-import { isUrl } from '../../lib/format.ts'
+import { formatDate, isUrl } from '../../lib/format.ts'
 import DataTable from './DataTable.tsx'
 import type { Column } from './tableRows.ts'
 
 const HIDDEN_KEYS = new Set(['id', 'link'])
+const DATE_KEYS = new Set(['start_date', 'end_date'])
 
 /** A table for records whose columns aren't known up front (plan blocks, course tabs, timetable). */
 export default function RecordsTable({
@@ -28,7 +29,7 @@ export default function RecordsTable({
   minWidth?: number
   onRowClick?: (row: Record<string, string>) => void
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const columns = useMemo(() => {
     const keys: string[] = []
@@ -42,7 +43,7 @@ export default function RecordsTable({
       header: fieldLabel(key),
       sortValue: (row) => row[key],
       render: (row) => {
-        const value = row[key] ?? ''
+        const value = DATE_KEYS.has(key) ? formatDate(row[key], i18n.resolvedLanguage ?? 'en') : (row[key] ?? '')
         if (isUrl(value)) {
           return (
             <Link href={value} target="_blank" rel="noreferrer" underline="hover">
@@ -54,7 +55,7 @@ export default function RecordsTable({
       },
     }))
     // `t` changes with the language, which also refreshes the header text fieldLabel reads.
-  }, [rows, hiddenKeys, t])
+  }, [rows, hiddenKeys, t, i18n.resolvedLanguage])
 
   return (
     <DataTable

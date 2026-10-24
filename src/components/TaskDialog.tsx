@@ -6,6 +6,7 @@ import { apiPostForm } from '../api/client.ts'
 import { useApi } from '../api/useApi.ts'
 import { endpoints } from '../api/endpoints.ts'
 import type { TaskDetail } from '../api/types.ts'
+import { formatDate } from '../lib/format.ts'
 import KeyValueGrid from './KeyValueGrid.tsx'
 import RecordDialog from './RecordDialog.tsx'
 
@@ -21,11 +22,12 @@ export default function TaskDialog({
   taskId: string | null
   onClose: () => void
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const language = i18n.resolvedLanguage ?? 'en'
   const path = taskId ? endpoints.task(courseId, taskId) : null
   const task = useApi<TaskDetail>(path)
   const data = task.data
-  const period = data && [data.start_date, data.end_date].filter(Boolean).join(' – ')
+  const period = data && [data.start_date, data.end_date].filter(Boolean).map((date) => formatDate(date, language)).join(' – ')
   const score = data?.score != null ? (data.max_score ? `${data.score} / ${data.max_score}` : data.score) : null
   const record = data && {
     title: data.subject,
