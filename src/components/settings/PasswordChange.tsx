@@ -9,6 +9,7 @@ import SettingsSection from './SettingsSection.tsx'
 
 export default function PasswordChange() {
   const { t } = useTranslation()
+  const [currentPassword, setCurrentPassword] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -25,10 +26,12 @@ export default function PasswordChange() {
     setNotice(null)
     try {
       const result = await apiPost<PasswordChangeResult>(endpoints.password, {
+        ...(currentPassword ? { current_password: currentPassword } : {}),
         password,
         confirm_password: confirmPassword,
       })
       if (result.changed) {
+        setCurrentPassword('')
         setPassword('')
         setConfirmPassword('')
         setNotice(t('password.changed'))
@@ -47,6 +50,14 @@ export default function PasswordChange() {
     <SettingsSection title={t('password.changeTitle')} description={t('password.changeDescription')}>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2.5 }}>
         <Stack spacing={2.5}>
+          <PasswordField
+            name="current_password"
+            label={t('password.currentPassword')}
+            value={currentPassword}
+            onChange={(event) => setCurrentPassword(event.target.value)}
+            autoComplete="current-password"
+            disabled={busy}
+          />
           <PasswordField
             name="password"
             label={t('password.newPassword')}

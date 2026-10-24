@@ -37,7 +37,7 @@ export default function SubscriptionForm({
     (current?.fields ?? SCORE_PAIR).some((name) => SCORE_PAIR.includes(name)),
   )
   const [attendance, setAttendance] = useState(current?.attendance ?? current?.absences ?? false)
-  const [individualWork, setIndividualWork] = useState(current?.individual_work ?? false)
+  const [individualWork, setIndividualWork] = useState(current?.assessments ?? false)
   const [courseScores, setCourseScores] = useState(current?.course_scores ?? false)
   const [busy, setBusy] = useState<'save' | 'off' | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -88,7 +88,7 @@ export default function SubscriptionForm({
             // Servers from before the rename read only `absences` and drop an unknown `attendance`, which would switch
             // this watch off. Both names carry the same value; a server with the rename takes `attendance` when both come.
             absences: attendance,
-            individual_work: individualWork,
+            assessments: individualWork,
             course_scores: courseScores,
           },
           { keepSession: true },

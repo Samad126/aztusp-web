@@ -137,7 +137,7 @@ export const subscription: Subscription = {
   email: 'student@example.com',
   fields: ['final_score', 'grade'],
   attendance: false,
-  individual_work: false,
+  assessments: false,
   course_scores: false,
   telegram_linked: false,
   status: 'ok',
