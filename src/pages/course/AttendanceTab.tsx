@@ -78,7 +78,7 @@ export default function AttendanceTab({ courseId }: { courseId: string }) {
               rows={data.students}
               getRowKey={(row) => row.student_id || row.number}
               isRowHighlighted={(row) => row.student_id === studentId}
-              pageSize={25}
+              pageSize={50}
               minWidth={Math.max(360, 200 + data.sessions.length * 44)}
               actions={
                 Object.keys(data.legend).length > 0 && (

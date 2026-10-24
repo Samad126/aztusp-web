@@ -59,7 +59,7 @@ export default function DataTable<T>({
   searchable = false,
   searchPlaceholder,
   searchText,
-  pageSize = 10,
+  pageSize = 50,
   paginate = true,
   onRowClick,
   isRowHighlighted,
