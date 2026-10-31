@@ -18,9 +18,6 @@ import { ApiError, apiDelete, apiPut } from '../../api/client.ts'
 import { endpoints } from '../../api/endpoints.ts'
 import type { Subscription } from '../../api/types.ts'
 
-// Final score and grade are watched as one (the backend keeps them together), so one checkbox sets both.
-const SCORE_PAIR = ['final_score', 'grade']
-
 export default function SubscriptionForm({
   current,
   telegramLinked,
@@ -33,18 +30,14 @@ export default function SubscriptionForm({
   const { t, i18n } = useTranslation()
   // Filled in once, from the saved settings. No password is asked for: the one saved at sign-in is used.
   const [email, setEmail] = useState(current?.email ?? '')
-  const [scoreAndGrade, setScoreAndGrade] = useState(() =>
-    (current?.fields ?? SCORE_PAIR).some((name) => SCORE_PAIR.includes(name)),
-  )
-  const [attendance, setAttendance] = useState(current?.attendance ?? current?.absences ?? false)
-  const [individualWork, setIndividualWork] = useState(current?.assessments ?? false)
-  const [courseScores, setCourseScores] = useState(current?.course_scores ?? false)
+  const [grades, setGrades] = useState(current?.grades ?? true)
+  const [attendance, setAttendance] = useState(current?.attendance ?? false)
   const [busy, setBusy] = useState<'save' | 'off' | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
 
-  // Like the backend, something has to be watched. Any one of the four options is enough.
-  const watching = scoreAndGrade || attendance || individualWork || courseScores
+  // Like the backend, something has to be watched. Either option is enough.
+  const watching = grades || attendance
   const hasContact = email.trim() !== '' || telegramLinked
   const canSave = busy === null && watching && hasContact
 
@@ -83,13 +76,8 @@ export default function SubscriptionForm({
           endpoints.notifications,
           {
             email: email.trim() || null,
-            fields: scoreAndGrade ? SCORE_PAIR : [],
+            grades,
             attendance,
-            // Servers from before the rename read only `absences` and drop an unknown `attendance`, which would switch
-            // this watch off. Both names carry the same value; a server with the rename takes `attendance` when both come.
-            absences: attendance,
-            assessments: individualWork,
-            course_scores: courseScores,
           },
           { keepSession: true },
         ),
@@ -127,10 +115,8 @@ export default function SubscriptionForm({
         <FormControl component="fieldset" error={!watching}>
           <FormLabel component="legend">{t('subscriptions.fields')}</FormLabel>
           <FormGroup row>
-            {option(t('subscriptions.scoreAndGrade'), scoreAndGrade, setScoreAndGrade)}
+            {option(t('subscriptions.grades'), grades, setGrades)}
             {option(t('subscriptions.attendance'), attendance, setAttendance)}
-            {option(t('subscriptions.individualWork'), individualWork, setIndividualWork)}
-            {option(t('subscriptions.courseScores'), courseScores, setCourseScores)}
           </FormGroup>
           {!watching && <FormHelperText>{t('subscriptions.fieldsRequired')}</FormHelperText>}
         </FormControl>

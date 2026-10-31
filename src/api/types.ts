@@ -242,12 +242,8 @@ export type CourseTab = 'notices' | 'board' | 'materials' | 'tasks'
 // Change notifications (`/me/notifications`) and the Telegram link (`/me/telegram`).
 export interface Subscription {
   email: string | null
-  fields: string[]
-  // Attendance marks. Servers from before the rename send them as `absences`, so the form reads either name.
-  attendance?: boolean
-  absences?: boolean
-  assessments: boolean
-  course_scores: boolean
+  grades: boolean
+  attendance: boolean
   telegram_linked: boolean
   status: 'ok' | 'wrong_password' | 'error'
   last_checked_at: string | null
