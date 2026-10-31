@@ -94,7 +94,7 @@ export default function SubscriptionForm({
       <Stack spacing={2.5}>
         {current?.status === 'wrong_password' && <Alert severity="warning">{t('subscriptions.wrongPassword')}</Alert>}
         {current?.status === 'error' && <Alert severity="warning">{t('subscriptions.checkFailed')}</Alert>}
-        {current && current.status === 'ok' && (
+        {current && (current.status === 'ok' || lastChecked) && (
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {lastChecked ? t('subscriptions.lastChecked', { time: lastChecked }) : t('subscriptions.notChecked')}
           </Typography>
