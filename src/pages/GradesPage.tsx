@@ -1,5 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Stack, TableCell, TableRow } from '@mui/material'
+import FinalSimulation from './grades/FinalSimulation.tsx'
+import GradeInfoButton from './grades/GradeInfoButton.tsx'
+import LetterChip from './grades/LetterChip.tsx'
 import DataTable from '../components/table/DataTable.tsx'
 import type { Column } from '../components/table/tableRows.ts'
 import { Async, EmptyState, PageHeader } from '../components/PageState.tsx'
@@ -9,6 +12,7 @@ import type { CourseGrades, GradesPage, ScoresPage, SemesterSummary } from '../a
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
 import { toNumber } from '../lib/format.ts'
+import { courseTotal, letterFor } from '../lib/grades.ts'
 
 const summaryColumns = (t: TFunction): Column<SemesterSummary>[] => [
   { key: 'semester', header: t('grades.semester'), sortValue: (row) => row.semester, noWrap: true },
@@ -27,7 +31,7 @@ const summaryColumns = (t: TFunction): Column<SemesterSummary>[] => [
 
 const pointCell = (value: string | null) => (value ? value : '—')
 
-const gradeColumns = (t: TFunction): Column<CourseGrades>[] => {
+const gradeColumns = (t: TFunction, simulated: Record<string, string>): Column<CourseGrades>[] => {
   const points = (key: keyof Pick<CourseGrades, 'quiz1' | 'midterm' | 'quiz2' | 'individual_work' | 'final'>, header: string): Column<CourseGrades> => ({
     key,
     header,
@@ -47,8 +51,18 @@ const gradeColumns = (t: TFunction): Column<CourseGrades>[] => {
       key: 'average',
       header: t('grades.totalPoints'),
       align: 'right',
-      sortValue: (row) => toNumber(row.average),
-      render: (row) => <strong>{pointCell(row.average)}</strong>,
+      sortValue: (row) => courseTotal(row, simulated[row.lec_open_idx])?.total ?? toNumber(row.average),
+      render: (row) => {
+        // The letter is only shown once there is an exam score, real or simulated; before it the total is partial.
+        const result = courseTotal(row, simulated[row.lec_open_idx])
+        return (
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'flex-end' }}>
+            <strong>{result ? result.total : pointCell(row.average)}</strong>
+            {result && <LetterChip letter={letterFor(result.total)} simulated={result.simulated} />}
+            <GradeInfoButton />
+          </Stack>
+        )
+      },
     },
   ]
 }
@@ -56,7 +70,8 @@ const gradeColumns = (t: TFunction): Column<CourseGrades>[] => {
 export default function GradesPage() {
   const { t } = useTranslation()
   const summaryCols = useMemo(() => summaryColumns(t), [t])
-  const gradeCols = useMemo(() => gradeColumns(t), [t])
+  const [simulated, setSimulated] = useState<Record<string, string>>({})
+  const gradeCols = useMemo(() => gradeColumns(t, simulated), [t, simulated])
   const scores = useApi<ScoresPage>(endpoints.scores)
   const grades = useApi<GradesPage>(endpoints.grades)
   const data = scores.data
@@ -101,6 +116,13 @@ export default function GradesPage() {
                   getRowKey={(row) => row.lec_open_idx}
                   paginate={false}
                   minWidth={760}
+                />
+              )}
+              {grades.data && grades.data.courses.length > 0 && (
+                <FinalSimulation
+                  courses={grades.data.courses}
+                  values={simulated}
+                  onChange={(courseId, value) => setSimulated((current) => ({ ...current, [courseId]: value }))}
                 />
               )}
             </Async>
