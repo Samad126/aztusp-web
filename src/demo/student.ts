@@ -1,4 +1,4 @@
-import type { CourseResult, ProfilePage, ScoresPage, Subscription, TelegramStatus } from '../api/types.ts'
+import type { CourseResult, GradesPage, ProfilePage, ScoresPage, Subscription, TelegramStatus } from '../api/types.ts'
 
 // Sample data for demo mode. Every person, email and number here is made up.
 
@@ -143,3 +143,29 @@ export const subscription: Subscription = {
 }
 
 export const telegram: TelegramStatus = { linked: false }
+
+function grade(code: string, course: string, q1: string, mid: string, q2: string, iw: string, final: string | null = null) {
+  const sum = [q1, mid, q2, iw, final].reduce((total, value) => total + (value ? Number(value) : 0), 0)
+  return {
+    lec_open_idx: code,
+    code,
+    course,
+    quiz1: q1,
+    midterm: mid,
+    quiz2: q2,
+    individual_work: iw,
+    final,
+    average: String(sum),
+    max: { quiz1: '10', midterm: '20', quiz2: '10', individual_work: '10', final: '50' },
+  }
+}
+
+export const grades: GradesPage = {
+  courses: [
+    grade('IT437', 'Fundamentals of Machine Learning', '9', '15', '9', '10'),
+    grade('IT453', 'Artificial Intelligence', '10', '20', '10', '10'),
+    grade('IT485', 'Database Programming', '9', '20', '10', '10'),
+    grade('IT483', 'IT Project Management', '10', '19', '10', '10'),
+    grade('IT481', 'Human-Computer Interaction', '10', '20', '10', '10'),
+  ],
+}

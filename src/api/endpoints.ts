@@ -12,6 +12,7 @@ export const endpoints = {
   password: `${V1}/me/password`,
   photo: `${V1}/me/photo`,
   scores: `${V1}/me/scores`,
+  grades: `${V1}/me/grades`,
   schedule: `${V1}/me/schedule`,
   notices: `${V1}/me/notices`,
   notice: (id: string) => `${V1}/me/notices/${encodeURIComponent(id)}`,

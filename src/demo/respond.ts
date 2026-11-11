@@ -4,7 +4,7 @@ import i18n from '../i18n/index.ts'
 import { demoCourses } from './courses.ts'
 import { ATTACHMENT_PATH, attachmentText, noticeDetails, noticesPage } from './notices.ts'
 import { scheduleFor } from './schedule.ts'
-import { profile, scores, subscription, telegram } from './student.ts'
+import { grades, profile, scores, subscription, telegram } from './student.ts'
 
 const COURSE_TABS: CourseTab[] = ['notices', 'board', 'materials', 'tasks']
 
@@ -12,6 +12,7 @@ const COURSE_TABS: CourseTab[] = ['notices', 'board', 'materials', 'tasks']
 const responses = new Map<string, unknown>([
   [endpoints.profile, profile],
   [endpoints.scores, scores],
+  [endpoints.grades, grades],
   [endpoints.notices, noticesPage],
   [endpoints.notifications, subscription],
   [endpoints.telegram, telegram],

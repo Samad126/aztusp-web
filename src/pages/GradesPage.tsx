@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
-import { Chip, Stack, TableCell, TableRow, Typography } from '@mui/material'
+import { Stack, TableCell, TableRow } from '@mui/material'
 import DataTable from '../components/table/DataTable.tsx'
 import type { Column } from '../components/table/tableRows.ts'
 import { Async, EmptyState, PageHeader } from '../components/PageState.tsx'
 import { endpoints } from '../api/endpoints.ts'
 import { useApi } from '../api/useApi.ts'
-import type { CourseResult, ScoresPage, SemesterSummary } from '../api/types.ts'
+import type { CourseGrades, GradesPage, ScoresPage, SemesterSummary } from '../api/types.ts'
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
-import { gradeTone, toNumber } from '../lib/format.ts'
+import { toNumber } from '../lib/format.ts'
 
 const summaryColumns = (t: TFunction): Column<SemesterSummary>[] => [
   { key: 'semester', header: t('grades.semester'), sortValue: (row) => row.semester, noWrap: true },
@@ -25,45 +25,40 @@ const summaryColumns = (t: TFunction): Column<SemesterSummary>[] => [
   },
 ]
 
-const resultColumns = (t: TFunction): Column<CourseResult>[] => [
-  { key: 'course', header: t('courses.course'), sortValue: (row) => row.course, render: (row) => <strong>{row.course}</strong> },
-  {
-    key: 'course_type',
-    header: t('grades.type'),
-    sortValue: (row) => row.course_type,
-    render: (row) => (row.course_type ? <Chip size="small" variant="outlined" label={row.course_type} /> : '—'),
-  },
-  { key: 'credits', header: t('common.credits'), align: 'right', sortValue: (row) => toNumber(row.credits) },
-  {
-    key: 'final_score',
-    header: t('grades.finalScore'),
+const pointCell = (value: string | null) => (value ? value : '—')
+
+const gradeColumns = (t: TFunction): Column<CourseGrades>[] => {
+  const points = (key: keyof Pick<CourseGrades, 'quiz1' | 'midterm' | 'quiz2' | 'individual_work' | 'final'>, header: string): Column<CourseGrades> => ({
+    key,
+    header,
     align: 'right',
-    sortValue: (row) => toNumber(row.final_score),
-    render: (row) => row.final_score || '—',
-  },
-  {
-    key: 'grade',
-    header: t('grades.grade'),
-    align: 'center',
-    sortValue: (row) => row.grade,
-    render: (row) =>
-      row.grade ? <Chip size="small" color={gradeTone(row.grade)} label={row.grade} sx={{ minWidth: 40, fontWeight: 700 }} /> : '—',
-  },
-  {
-    key: 'retake',
-    header: t('grades.retake'),
-    align: 'center',
-    sortValue: (row) => row.retake,
-    render: (row) =>
-      row.retake.toUpperCase() === 'Y' ? <Chip size="small" color="warning" label={t('grades.retake')} /> : <Typography variant="body2" sx={{ color: 'text.secondary' }}>—</Typography>,
-  },
-]
+    sortValue: (row) => toNumber(row[key]),
+    render: (row) => pointCell(row[key]),
+  })
+  return [
+    { key: 'code', header: t('grades.code'), sortValue: (row) => row.code, noWrap: true },
+    { key: 'course', header: t('courses.course'), sortValue: (row) => row.course },
+    points('quiz1', t('grades.quiz1')),
+    points('midterm', t('grades.midterm')),
+    points('quiz2', t('grades.quiz2')),
+    points('individual_work', t('grades.individualWork')),
+    points('final', t('grades.final')),
+    {
+      key: 'average',
+      header: t('grades.totalPoints'),
+      align: 'right',
+      sortValue: (row) => toNumber(row.average),
+      render: (row) => <strong>{pointCell(row.average)}</strong>,
+    },
+  ]
+}
 
 export default function GradesPage() {
   const { t } = useTranslation()
   const summaryCols = useMemo(() => summaryColumns(t), [t])
-  const resultCols = useMemo(() => resultColumns(t), [t])
+  const gradeCols = useMemo(() => gradeColumns(t), [t])
   const scores = useApi<ScoresPage>(endpoints.scores)
+  const grades = useApi<GradesPage>(endpoints.grades)
   const data = scores.data
   const total = data?.totals.semesters
 
@@ -95,23 +90,20 @@ export default function GradesPage() {
               }
             />
 
-            {data.sections.semester_courses.length === 0 && (
-              <EmptyState title={t('grades.noResults')}>{t('grades.noResultsHint')}</EmptyState>
-            )}
-
-            {data.sections.semester_courses.map((semester, index) => (
-              <DataTable
-                key={index}
-                title={semester.title ?? t('schedule.semester', { n: index + 1 })}
-                subtitle={semester.rows.length === 1 ? t('grades.courseCountOne') : t('grades.courseCount', { n: semester.rows.length })}
-                columns={resultCols}
-                rows={semester.rows}
-                getRowKey={(row, rowIndex) => `${row.course}-${rowIndex}`}
-                searchable={semester.rows.length > 8}
-                searchPlaceholder={t('grades.searchCourses')}
-                minWidth={680}
-              />
-            ))}
+            <Async loading={grades.loading} error={grades.error} onRetry={grades.reload} rows={5}>
+              {grades.data && grades.data.courses.length === 0 ? (
+                <EmptyState title={t('grades.noResults')}>{t('grades.noResultsHint')}</EmptyState>
+              ) : (
+                <DataTable
+                  title={t('grades.current')}
+                  columns={gradeCols}
+                  rows={grades.data?.courses ?? []}
+                  getRowKey={(row) => row.lec_open_idx}
+                  paginate={false}
+                  minWidth={760}
+                />
+              )}
+            </Async>
           </Stack>
         )}
       </Async>

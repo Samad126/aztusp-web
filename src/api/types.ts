@@ -62,6 +62,23 @@ export interface CourseResult {
   retake: string
 }
 
+export interface CourseGrades {
+  lec_open_idx: string
+  code: string
+  course: string
+  quiz1: string | null
+  midterm: string | null
+  quiz2: string | null
+  individual_work: string | null
+  final: string | null
+  average: string | null
+  max: Record<string, string | null>
+}
+
+export interface GradesPage {
+  courses: CourseGrades[]
+}
+
 export interface ScoresPage extends Envelope {
   tables: {
     student: { faculty_department: string; student_id: string; first_name: string; status: string }[]
