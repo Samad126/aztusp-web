@@ -136,7 +136,8 @@ export const scores: ScoresPage = {
 export const subscription: Subscription = {
   email: 'student@example.com',
   grades: true,
-  attendance: false,
+  absent: true,
+  present: false,
   telegram_linked: false,
   status: 'ok',
   last_checked_at: '2026-10-10T06:30:00Z',

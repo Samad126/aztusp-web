@@ -260,7 +260,8 @@ export type CourseTab = 'notices' | 'board' | 'materials' | 'tasks'
 export interface Subscription {
   email: string | null
   grades: boolean
-  attendance: boolean
+  absent: boolean
+  present: boolean
   telegram_linked: boolean
   status: 'ok' | 'wrong_password' | 'error'
   last_checked_at: string | null

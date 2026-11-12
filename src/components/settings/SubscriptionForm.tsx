@@ -31,13 +31,14 @@ export default function SubscriptionForm({
   // Filled in once, from the saved settings. No password is asked for: the one saved at sign-in is used.
   const [email, setEmail] = useState(current?.email ?? '')
   const [grades, setGrades] = useState(current?.grades ?? true)
-  const [attendance, setAttendance] = useState(current?.attendance ?? false)
+  const [absent, setAbsent] = useState(current?.absent ?? false)
+  const [present, setPresent] = useState(current?.present ?? false)
   const [busy, setBusy] = useState<'save' | 'off' | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
 
   // Like the backend, something has to be watched. Either option is enough.
-  const watching = grades || attendance
+  const watching = grades || absent || present
   const hasContact = email.trim() !== '' || telegramLinked
   const canSave = busy === null && watching && hasContact
 
@@ -77,7 +78,8 @@ export default function SubscriptionForm({
           {
             email: email.trim() || null,
             grades,
-            attendance,
+            absent,
+            present,
           },
           { keepSession: true },
         ),
@@ -116,7 +118,8 @@ export default function SubscriptionForm({
           <FormLabel component="legend">{t('subscriptions.fields')}</FormLabel>
           <FormGroup row>
             {option(t('subscriptions.grades'), grades, setGrades)}
-            {option(t('subscriptions.attendance'), attendance, setAttendance)}
+            {option(t('subscriptions.absent'), absent, setAbsent)}
+            {option(t('subscriptions.present'), present, setPresent)}
           </FormGroup>
           {!watching && <FormHelperText>{t('subscriptions.fieldsRequired')}</FormHelperText>}
         </FormControl>
