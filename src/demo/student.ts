@@ -1,4 +1,4 @@
-import type { CourseResult, GradesPage, ProfilePage, ScoresPage, Subscription, TelegramStatus } from '../api/types.ts'
+import type { CourseResult, GradesPage, Preferences, ProfilePage, ScoresPage, Subscription, TelegramStatus } from '../api/types.ts'
 
 // Sample data for demo mode. Every person, email and number here is made up.
 
@@ -142,6 +142,8 @@ export const subscription: Subscription = {
   status: 'ok',
   last_checked_at: '2026-10-10T06:30:00Z',
 }
+
+export const preferences: Preferences = { start_page: 'home', stay_signed_in: false }
 
 export const telegram: TelegramStatus = { linked: false }
 

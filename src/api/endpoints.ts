@@ -6,6 +6,7 @@ export const endpoints = {
   login: `${V1}/auth/login`,
   logout: `${V1}/auth/logout`,
   profile: `${V1}/me/profile`,
+  preferences: `${V1}/me/preferences`,
   notifications: `${V1}/me/notifications`,
   telegram: `${V1}/me/telegram`,
   telegramLink: `${V1}/me/telegram/link`,

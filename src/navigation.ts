@@ -7,6 +7,7 @@ import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 
 import type { MessageKey } from './i18n/locales/en.ts'
+import type { StartPage } from './api/types.ts'
 
 export const navItems: { labelKey: MessageKey; path: string; icon: typeof DashboardOutlinedIcon }[] = [
   { labelKey: 'nav.home', path: '/', icon: DashboardOutlinedIcon },
@@ -21,3 +22,13 @@ export const navItems: { labelKey: MessageKey; path: string; icon: typeof Dashbo
 export function findNavItem(pathname: string) {
   return navItems.find((item) => (item.path === '/' ? pathname === '/' : pathname.startsWith(item.path)))
 }
+
+/** The pages a student can open the app on, in the order the settings list shows them. */
+export const startPages: { value: StartPage; labelKey: MessageKey; path: string }[] = [
+  { value: 'home', labelKey: 'nav.home', path: '/' },
+  { value: 'courses', labelKey: 'nav.courses', path: '/courses' },
+  { value: 'schedule', labelKey: 'nav.schedule', path: '/schedule' },
+  { value: 'grades', labelKey: 'nav.grades', path: '/grades' },
+  { value: 'attendance', labelKey: 'nav.attendance', path: '/attendance' },
+  { value: 'notices', labelKey: 'nav.notices', path: '/notices' },
+]

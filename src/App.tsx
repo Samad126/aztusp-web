@@ -5,7 +5,7 @@ import './i18n/index.ts'
 import { AuthProvider } from './auth/AuthProvider.tsx'
 import DashboardLayout from './layouts/DashboardLayout.tsx'
 import LoginPage from './pages/LoginPage.tsx'
-import HomePage from './pages/HomePage.tsx'
+import StartRedirect from './pages/StartPage.tsx'
 import CoursesPage from './pages/CoursesPage.tsx'
 import CourseDetailPage from './pages/CourseDetailPage.tsx'
 import SchedulePage from './pages/SchedulePage.tsx'
@@ -23,7 +23,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
 
           <Route element={<DashboardLayout />}>
-            <Route index element={<HomePage />} />
+            <Route index element={<StartRedirect />} />
             <Route path="courses" element={<CoursesPage />} />
             <Route path="courses/:courseId" element={<CourseDetailPage />} />
             <Route path="schedule" element={<SchedulePage />} />

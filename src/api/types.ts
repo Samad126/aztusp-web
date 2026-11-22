@@ -257,6 +257,13 @@ export interface CourseAttendance {
 export type CourseTab = 'notices' | 'board' | 'materials' | 'tasks'
 
 // Change notifications (`/me/notifications`) and the Telegram link (`/me/telegram`).
+export type StartPage = 'home' | 'courses' | 'schedule' | 'grades' | 'attendance' | 'notices'
+
+export interface Preferences {
+  start_page: StartPage
+  stay_signed_in: boolean
+}
+
 export interface Subscription {
   email: string | null
   grades: boolean
