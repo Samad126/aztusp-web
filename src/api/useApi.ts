@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { apiGet } from './client.ts'
+import { apiGet, isAbort } from './client.ts'
 import { clearPhoto } from './photo.ts'
 
 // Every call scrapes the university portal live, so responses are kept for a while
@@ -7,29 +7,75 @@ import { clearPhoto } from './photo.ts'
 const FRESH_MS = 5 * 60 * 1000
 
 const cache = new Map<string, { data: unknown; at: number }>()
-const inflight = new Map<string, Promise<unknown>>()
+// A request is shared by every component that asks for the path. It is cancelled only when the last of them leaves,
+// so switching tabs stops the portal scrape that nobody is waiting for any more.
+interface Inflight {
+  promise: Promise<unknown>
+  controller: AbortController
+  waiting: number
+}
+const inflight = new Map<string, Inflight>()
 
 export function clearApiCache() {
   cache.clear()
+  inflight.forEach((entry) => entry.controller.abort())
   inflight.clear()
   clearPhoto()
 }
 
-export function fetchCached<T>(path: string, force = false): Promise<T> {
+/** `signal` ends this caller's interest: the shared request is aborted once no caller is left waiting for it. */
+export function fetchCached<T>(path: string, force = false, signal?: AbortSignal): Promise<T> {
   const hit = cache.get(path)
   if (!force && hit && Date.now() - hit.at < FRESH_MS) return Promise.resolve(hit.data as T)
 
-  const pending = inflight.get(path)
-  if (pending) return pending as Promise<T>
+  let entry = inflight.get(path)
+  if (!entry) {
+    const controller = new AbortController()
+    const created: Inflight = {
+      controller,
+      waiting: 0,
+      promise: apiGet<T>(path, controller.signal)
+        .then((data) => {
+          cache.set(path, { data, at: Date.now() })
+          return data
+        })
+        .finally(() => {
+          if (inflight.get(path) === created) inflight.delete(path)
+        }),
+    }
+    created.promise.catch(() => {}) // an abort nobody waits for must not surface as an unhandled rejection
+    inflight.set(path, created)
+    entry = created
+  }
 
-  const request = apiGet<T>(path)
-    .then((data) => {
-      cache.set(path, { data, at: Date.now() })
-      return data
-    })
-    .finally(() => inflight.delete(path))
-  inflight.set(path, request)
-  return request
+  const shared = entry
+  if (!signal) return shared.promise as Promise<T>
+
+  shared.waiting += 1
+  return new Promise<T>((resolve, reject) => {
+    const leave = () => {
+      shared.waiting -= 1
+      if (shared.waiting <= 0 && inflight.get(path) === shared) {
+        inflight.delete(path)
+        shared.controller.abort()
+      }
+      reject(new DOMException('Aborted', 'AbortError'))
+    }
+    if (signal.aborted) return leave()
+    signal.addEventListener('abort', leave, { once: true })
+    shared.promise.then(
+      (data) => {
+        signal.removeEventListener('abort', leave)
+        shared.waiting -= 1
+        resolve(data as T)
+      },
+      (error) => {
+        signal.removeEventListener('abort', leave)
+        shared.waiting -= 1
+        reject(error)
+      },
+    )
+  })
 }
 
 interface Result<T> {
@@ -45,13 +91,13 @@ export function useApi<T>(path: string | null) {
 
   useEffect(() => {
     if (!path) return
-    let active = true
-    fetchCached<T>(path, nonce > 0)
-      .then((data) => active && setResult({ path, nonce, data }))
-      .catch((error: Error) => active && setResult({ path, nonce, error }))
-    return () => {
-      active = false
-    }
+    const controller = new AbortController()
+    fetchCached<T>(path, nonce > 0, controller.signal)
+      .then((data) => setResult({ path, nonce, data }))
+      .catch((error: Error) => {
+        if (!isAbort(error)) setResult({ path, nonce, error })
+      })
+    return () => controller.abort()
   }, [path, nonce])
 
   const reload = useCallback(() => setNonce((value) => value + 1), [])

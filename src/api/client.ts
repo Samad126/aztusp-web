@@ -6,6 +6,10 @@ import { session } from './session.ts'
 const API_BASE: string =
   import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'https://aztuapi.alakbaroff.com')
 
+export function isAbort(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError'
+}
+
 export class ApiError extends Error {
   status: number
 
@@ -31,7 +35,9 @@ async function send(path: string, init: RequestInit = {}, { keepSession = false 
     response = session.demo
       ? demoResponse(init.method ?? 'GET', path)
       : await fetch(API_BASE + path, { ...init, headers })
-  } catch {
+  } catch (error) {
+    // An aborted request is not a failure: let the caller see it as an abort and stay quiet.
+    if (init.signal?.aborted) throw error
     throw new ApiError(0, i18n.t('error.network'))
   }
 
@@ -52,8 +58,8 @@ async function send(path: string, init: RequestInit = {}, { keepSession = false 
   return response
 }
 
-export async function apiGet<T>(path: string): Promise<T> {
-  return (await send(path)).json()
+export async function apiGet<T>(path: string, signal?: AbortSignal): Promise<T> {
+  return (await send(path, { signal })).json()
 }
 
 async function sendJson<T>(method: string, path: string, body?: unknown, options?: SendOptions): Promise<T> {
