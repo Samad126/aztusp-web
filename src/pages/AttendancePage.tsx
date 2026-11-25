@@ -6,6 +6,7 @@ import { Async, PageHeader } from '../components/PageState.tsx'
 import DataTable from '../components/table/DataTable.tsx'
 import { endpoints } from '../api/endpoints.ts'
 import { fetchCached, useApi } from '../api/useApi.ts'
+import { isAbort } from '../api/client.ts'
 import type { Course, CourseAttendance, ProfilePage } from '../api/types.ts'
 import { useTranslation } from 'react-i18next'
 import { parseLessons } from '../lib/attendance.ts'
@@ -26,15 +27,14 @@ export default function AttendancePage() {
   // One request per course; each row fills in as soon as its own response arrives.
   useEffect(() => {
     if (!courses.data) return
-    let active = true
+    const controller = new AbortController()
+    const { signal } = controller
     for (const course of courses.data) {
-      fetchCached<CourseAttendance>(endpoints.courseAttendance(course.lec_open_idx), nonce > 0)
-        .then((attendance) => active && setResults((prev) => ({ ...prev, [course.lec_open_idx]: { course, state: 'ready', attendance } })))
-        .catch((error: Error) => active && setResults((prev) => ({ ...prev, [course.lec_open_idx]: { course, state: 'error', error: error.message } })))
+      fetchCached<CourseAttendance>(endpoints.courseAttendance(course.lec_open_idx), nonce > 0, signal)
+        .then((attendance) => !signal.aborted && setResults((prev) => ({ ...prev, [course.lec_open_idx]: { course, state: 'ready', attendance } })))
+        .catch((error: Error) => !signal.aborted && !isAbort(error) && setResults((prev) => ({ ...prev, [course.lec_open_idx]: { course, state: 'error', error: error.message } })))
     }
-    return () => {
-      active = false
-    }
+    return () => controller.abort()
   }, [courses.data, nonce])
 
   const rows = useMemo<Row[]>(
